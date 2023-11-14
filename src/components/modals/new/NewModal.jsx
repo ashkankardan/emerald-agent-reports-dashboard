@@ -27,6 +27,8 @@ import { UserContext } from '../../../contexts/user-context'
 
 const NewModal = ({ setDisplayNewItem }) => {
   const [addingReport, setAddingReport] = useState(false)
+  const [duration, setDuration] = useState('')
+  const [startTime, setStartTime] = useState('')
 
   const { user } = useContext(UserContext)
   const formRef = useRef(null)
@@ -46,8 +48,6 @@ const NewModal = ({ setDisplayNewItem }) => {
     const name = formData.get('name')
     const phone = formData.get('phone')
     const transfer = formData.get('transfer')
-    const startTime = formData.get('start-time')
-    const duration = formData.get('duration')
     const notes = formData.get('notes')
     const enrolled = formData.get('enrolled') === 'on'
     const notEnoughDebt = formData.get('notEnoughDebt') === 'on'
@@ -85,6 +85,52 @@ const NewModal = ({ setDisplayNewItem }) => {
 
   const handleCloseModal = () => {
     setDisplayNewItem(false)
+  }
+
+  function formatDuration (input) {
+    let numbers = input.replace(/[^\d]/g, '') // Remove non-numeric characters
+    if (numbers.length > 6) {
+      numbers = numbers.substr(0, 6) // Limit string length to 6 digits
+    }
+    const parts = []
+    for (let i = 0; i < numbers.length; i += 2) {
+      parts.push(numbers.substr(i, 2))
+    }
+    return parts.join(':')
+  }
+
+  const handleDurationChange = event => {
+    const formatted = formatDuration(event.target.value)
+    setDuration(formatted)
+  }
+
+  function formatStartTime (input) {
+    let cleanInput = input.toUpperCase().replace(/[^0-9APM]/g, '')
+
+    // Extract numbers and AM/PM part
+    let numbers = cleanInput.replace(/[APM]/g, '')
+    let amPm = cleanInput.match(/[APM]+/)?.[0] || ''
+
+    // Limit string length to 4 digits for time
+    if (numbers.length > 4) {
+      numbers = numbers.substr(0, 4)
+    }
+
+    let formattedTime =
+      numbers.length > 2
+        ? `${numbers.substr(0, 2)}:${numbers.substr(2)}`
+        : numbers
+
+    if (amPm.length > 0) {
+      formattedTime += ' ' + amPm.substr(0, 2) // Take only the first two characters of AM/PM part
+    }
+
+    return formattedTime
+  }
+
+  const handleStartTimeChange = event => {
+    const formatted = formatStartTime(event.target.value)
+    setStartTime(formatted)
   }
 
   return (
@@ -129,10 +175,14 @@ const NewModal = ({ setDisplayNewItem }) => {
                 <Label htmlFor='start-time'>Start Time:</Label>
                 <Input
                   id='start-time'
+                  required
                   type='text'
                   name='start-time'
-                  placeholder='Start Time'
-                  required
+                  value={startTime}
+                  onChange={handleStartTimeChange}
+                  placeholder='00:00 AM'
+                  maxLength='11'
+                  minLength='11'
                 />
               </InputRow>
               <InputRow>
@@ -141,7 +191,11 @@ const NewModal = ({ setDisplayNewItem }) => {
                   type='text'
                   id='duration'
                   name='duration'
-                  placeholder='Duration'
+                  value={duration}
+                  placeholder='00:00:00'
+                  onChange={handleDurationChange}
+                  maxLength='8'
+                  minLength='8'
                   required
                 />
               </InputRow>

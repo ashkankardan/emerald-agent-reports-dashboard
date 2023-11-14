@@ -20,6 +20,8 @@ import {
 
 const UpdateModal = ({ setDisplayUpdate, report }) => {
   const [updatingReport, setUpdatingReport] = useState(false)
+  const [duration, setDuration] = useState('')
+  const [startTime, setStartTime] = useState('')
 
   const formRef = useRef(null)
 
@@ -31,7 +33,7 @@ const UpdateModal = ({ setDisplayUpdate, report }) => {
       formRef.current.elements['start-time'].value = report.startTime || ''
       formRef.current.elements['duration'].value = report.duration || ''
       formRef.current.elements['notes'].value = report.notes || ''
-      formRef.current.elements['enrolled'].checked = report.enrolled === true;
+      formRef.current.elements['enrolled'].checked = report.enrolled === true
       formRef.current.elements['enrolled-amount'].value =
         report.enrolledAmount || ''
       formRef.current.elements['notEnoughDebt'].checked =
@@ -49,8 +51,8 @@ const UpdateModal = ({ setDisplayUpdate, report }) => {
     const updatedReport = {
       phone: formData.get('phone'),
       name: formData.get('name'),
-      startTime: formData.get('start-time'),
-      duration: formData.get('duration'),
+      startTime,
+      duration,
       notes: formData.get('notes'),
       enrolled: formData.get('enrolled') === 'on',
       enrolledAmount: formData.get('enrolled-amount'),
@@ -72,6 +74,52 @@ const UpdateModal = ({ setDisplayUpdate, report }) => {
 
   const handleCloseModal = () => {
     setDisplayUpdate(false)
+  }
+
+  function formatDuration (input) {
+    let numbers = input.replace(/[^\d]/g, '') // Remove non-numeric characters
+    if (numbers.length > 6) {
+      numbers = numbers.substr(0, 6) // Limit string length to 6 digits
+    }
+    const parts = []
+    for (let i = 0; i < numbers.length; i += 2) {
+      parts.push(numbers.substr(i, 2))
+    }
+    return parts.join(':')
+  }
+
+  const handleDurationChange = event => {
+    const formatted = formatDuration(event.target.value)
+    setDuration(formatted)
+  }
+
+  function formatStartTime (input) {
+    let cleanInput = input.toUpperCase().replace(/[^0-9APM]/g, '')
+
+    // Extract numbers and AM/PM part
+    let numbers = cleanInput.replace(/[APM]/g, '')
+    let amPm = cleanInput.match(/[APM]+/)?.[0] || ''
+
+    // Limit string length to 4 digits for time
+    if (numbers.length > 4) {
+      numbers = numbers.substr(0, 4)
+    }
+
+    let formattedTime =
+      numbers.length > 2
+        ? `${numbers.substr(0, 2)}:${numbers.substr(2)}`
+        : numbers
+
+    if (amPm.length > 0) {
+      formattedTime += ' ' + amPm.substr(0, 2) // Take only the first two characters of AM/PM part
+    }
+
+    return formattedTime
+  }
+
+  const handleStartTimeChange = event => {
+    const formatted = formatStartTime(event.target.value)
+    setStartTime(formatted)
   }
 
   return (
@@ -117,10 +165,13 @@ const UpdateModal = ({ setDisplayUpdate, report }) => {
                 <Label htmlFor='start-time'>Start Time:</Label>
                 <Input
                   id='start-time'
+                  required
                   type='text'
                   name='start-time'
-                  placeholder='Start Time'
-                  required
+                  value={startTime}
+                  onChange={handleStartTimeChange}
+                  placeholder='00:00 AM'
+                  maxLength='11'
                 />
               </InputRow>
               <InputRow>
@@ -129,8 +180,11 @@ const UpdateModal = ({ setDisplayUpdate, report }) => {
                   type='text'
                   id='duration'
                   name='duration'
-                  placeholder='Duration'
                   required
+                  value={duration}
+                  placeholder='00:00:00'
+                  onChange={handleDurationChange}
+                  maxLength='8'
                 />
               </InputRow>
             </TopLeftCol>
@@ -172,7 +226,9 @@ const UpdateModal = ({ setDisplayUpdate, report }) => {
           </BottomRow>
 
           <BtnContainer>
-            <Btn disabled={updatingReport} type='submit'>Update Report</Btn>
+            <Btn disabled={updatingReport} type='submit'>
+              Update Report
+            </Btn>
           </BtnContainer>
         </form>
       </ModalContent>
