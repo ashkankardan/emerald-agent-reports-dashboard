@@ -47,7 +47,7 @@ const NewModal = ({ setDisplayNewItem }) => {
     const formData = new FormData(formRef.current)
     const name = formData.get('name')
     const phone = formData.get('phone')
-    const transfer = formData.get('transfer')
+    const transfer = parseInt(formData.get('transfer'), 10)
     const notes = formData.get('notes')
     const enrolled = formData.get('enrolled') === 'on'
     const notEnoughDebt = formData.get('notEnoughDebt') === 'on'
