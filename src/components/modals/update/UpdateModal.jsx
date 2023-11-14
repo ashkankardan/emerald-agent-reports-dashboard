@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react'
+import React, { useRef, useEffect, useState, useContext } from 'react'
 import { doc, updateDoc, reportsRef, db } from '../../../config'
 import {
   BottomRow,
@@ -17,12 +17,14 @@ import {
   TopRightCol,
   TopRow
 } from './UpdateModal.styles'
+import { UserContext } from '../../../contexts/user-context'
 
 const UpdateModal = ({ setDisplayUpdate, report }) => {
   const [updatingReport, setUpdatingReport] = useState(false)
   const [duration, setDuration] = useState('')
   const [startTime, setStartTime] = useState('')
 
+  const { user } = useContext(UserContext)
   const formRef = useRef(null)
 
   // Setting default values when the component mounts
@@ -31,13 +33,17 @@ const UpdateModal = ({ setDisplayUpdate, report }) => {
       formRef.current.elements['phone'].value = report.phone || ''
       formRef.current.elements['name'].value = report.name || ''
       formRef.current.elements['start-time'].value = report.startTime || ''
+      setStartTime(report.startTime || '')
       formRef.current.elements['duration'].value = report.duration || ''
+      setDuration(report.duration || '')
       formRef.current.elements['notes'].value = report.notes || ''
       formRef.current.elements['enrolled'].checked = report.enrolled === true
       formRef.current.elements['enrolled-amount'].value =
         report.enrolledAmount || ''
-      formRef.current.elements['notEnoughDebt'].checked =
-        report.notEnoughDebt || false
+      if (user.department !== 'tax') {
+        formRef.current.elements['notEnoughDebt'].checked =
+          report.notEnoughDebt || false
+      }
       formRef.current.elements['transfer'].value = report.transfer || 1
     }
   }, [report])
@@ -61,7 +67,7 @@ const UpdateModal = ({ setDisplayUpdate, report }) => {
     }
 
     // Update the document in Firestore
-    const docRef = doc(db, 'reports', report.id) // Replace 'yourCollectionName' with your actual collection name
+    const docRef = doc(db, 'reports', report.id)
     try {
       await updateDoc(docRef, updatedReport)
     } catch (error) {
@@ -204,14 +210,16 @@ const UpdateModal = ({ setDisplayUpdate, report }) => {
                   placeholder='Enrolled Amount'
                 />
               </InputRow>
-              <InputRow>
-                <Label htmlFor='notEnoughDebt'>Not Enough Debt:</Label>
-                <CheckboxInput
-                  type='checkbox'
-                  id='notEnoughDebt'
-                  name='notEnoughDebt'
-                />
-              </InputRow>
+              {user.department !== 'tax' && (
+                <InputRow>
+                  <Label htmlFor='notEnoughDebt'>Not Enough Debt:</Label>
+                  <CheckboxInput
+                    type='checkbox'
+                    id='notEnoughDebt'
+                    name='notEnoughDebt'
+                  />
+                </InputRow>
+              )}
             </TopRightCol>
           </TopRow>
 

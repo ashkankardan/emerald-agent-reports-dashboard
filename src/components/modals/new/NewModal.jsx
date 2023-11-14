@@ -216,14 +216,16 @@ const NewModal = ({ setDisplayNewItem }) => {
                   placeholder='Enrolled Amount'
                 />
               </InputRow>
-              <InputRow>
-                <Label htmlFor='notEnoughDebt'>Not Enough Debt:</Label>
-                <CheckboxInput
-                  type='checkbox'
-                  id='notEnoughDebt'
-                  name='notEnoughDebt'
-                />
-              </InputRow>
+              {user.department !== 'tax' && (
+                <InputRow>
+                  <Label htmlFor='notEnoughDebt'>Not Enough Debt:</Label>
+                  <CheckboxInput
+                    type='checkbox'
+                    id='notEnoughDebt'
+                    name='notEnoughDebt'
+                  />
+                </InputRow>
+              )}
             </TopRightCol>
           </TopRow>
 

@@ -23,7 +23,9 @@ const ReportItem = ({ report, setItemToUpdate, setDisplayUpdate, agent }) => {
       <TableData>{report.notes}</TableData>
       <TableData>{report.enrolled ? 'Yes' : 'No'}</TableData>
       <TableData>{report.enrolledAmount}</TableData>
-      <TableData>{report.notEnoughDebt ? 'Yes' : '-'}</TableData>
+      {user.department !== 'tax' && (
+        <TableData>{report.notEnoughDebt ? 'Yes' : '-'}</TableData>
+      )}
       <TableData>
         <button onClick={handleOpenUpdateModal}>Update</button>
       </TableData>
