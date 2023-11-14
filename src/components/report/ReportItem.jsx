@@ -1,29 +1,34 @@
-import React from 'react';
-import { MainContainer } from './Reports.styles';
+import React, { useContext } from 'react'
+import { TableData, TableRow } from './ReportItem.styles'
+import { UserContext } from '../../contexts/user-context'
 
-const ReportItem = ({report, setItemToUpdate, setDisplayUpdate}) => {
+const ReportItem = ({ report, setItemToUpdate, setDisplayUpdate, agent }) => {
+  const { user } = useContext(UserContext)
 
-  const handleOpenUpdateModal = () =>{
+  const handleOpenUpdateModal = () => {
     setDisplayUpdate(true)
     setItemToUpdate(report)
   }
 
-  console.log(report)
   return (
-    <MainContainer>
-      <p><strong>TRSFR#: </strong>{report.transfer}</p>
-      <p><strong>Phone#: </strong>{report.phone}</p>
-      <p><strong>Name: </strong>{report.name}</p>
-      <p><strong>Start Time: </strong>{report.startTime}</p>
-      <p><strong>Duration: </strong>{report.duration}</p>
-      <p><strong>Notes: </strong>{report.notes}</p>
-      <p><strong>Enrolled: </strong>{report.enrolled}</p>
-      <p><strong>Enrolled Amount: </strong>{report.enrolledAmount}</p>
-      <p><strong>Not Enough Debt: </strong>{report.notEnoughDebt ? 'Yes' : 'No'}</p>
-      <button onClick={handleOpenUpdateModal}>Update</button>
+    <TableRow>
+      {(user.role === 'admin' || user.role === 'super-admin') && (
+        <TableData>{agent}</TableData>
+      )}
+      <TableData>{report.transfer}</TableData>
+      <TableData>{report.phone}</TableData>
+      <TableData>{report.name}</TableData>
+      <TableData>{report.startTime}</TableData>
+      <TableData>{report.duration}</TableData>
+      <TableData>{report.notes}</TableData>
+      <TableData>{report.enrolled ? 'Yes' : 'No'}</TableData>
+      <TableData>{report.enrolledAmount}</TableData>
+      <TableData>{report.notEnoughDebt ? 'Yes' : '-'}</TableData>
+      <TableData>
+        <button onClick={handleOpenUpdateModal}>Update</button>
+      </TableData>
+    </TableRow>
+  )
+}
 
-    </MainContainer>
-  );
-};
-
-export default ReportItem;
+export default ReportItem

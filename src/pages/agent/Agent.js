@@ -1,54 +1,44 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { MainContainer } from './Agent.styles';
-import { usersRef, getDocs, signOut, auth } from '../../config';
-import BackBTN from '../../components/back-btn/BackBTN';
-import LoginForm from '../../components/auth-forms/LoginForm';
+import React, { useEffect, useContext } from 'react'
+import { MainContainer } from './Agent.styles'
+import BackBTN from '../../components/back-btn/BackBTN'
 import { UserContext } from '../../contexts/user-context'
-import Reports from '../../components/report/Reports';
+import Reports from '../../components/report/Reports'
+import { useNavigate } from 'react-router-dom'
+import useLogout from '../../hooks/useLogout'
 
 const Agent = () => {
-  const [agents, setAgents] = useState([])
-  const { user, setUser } = useContext(UserContext);
+  const { user } = useContext(UserContext)
+  const handleLogout = useLogout()
 
-  // useEffect(() => {
-  //   console.log('user: ', user)
-  // }, [user])
+  const navigate = useNavigate()
 
-  const handleLogout = () => {
-    signOut(auth).then((cred) => {
-      setUser(null)
-      localStorage.removeItem('user');
-    }).catch(err => {
-      console.log(err.message)
-    })
-  }
+  useEffect(() => {
+    if (!user) {
+      navigate('/login')
+    }
 
-  // useEffect(() => {
-  //   getDocs(usersRef).then((snapshot) => {
-  //     let tempAgents = []
-  //     snapshot.forEach((doc) => {
-  //       tempAgents.push({ ...doc.data(), id: doc.id })
-  //     })
-  //     setAgents(tempAgents)
-  //   }).catch(err => { console.log(err.message) })
-  // }, [])
+    if (user.role === 'admin' || user.role === 'super-admin') {
+      navigate('/admin')
+    }
 
+    if (
+      user &&
+      user.role !== 'agent' &&
+      user.role !== 'admin' &&
+      user.role !== 'super-admin'
+    ) {
+      handleLogout()
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, navigate])
 
   return (
     <MainContainer>
-      Agent
-
-
-      {
-        user ? <>
-          <button onClick={handleLogout}>Logout</button>
-          <Reports />
-        </> : <LoginForm setUser={setUser} />
-      }
+      <Reports />
       {/* <BackBTN /> */}
-
     </MainContainer>
-  );
-};
+  )
+}
 
-export default Agent;
+export default Agent

@@ -26,10 +26,9 @@ const Signup = () => {
       const docSnap = await getDoc(userDocRef);
 
       if (docSnap.exists()) {
-        console.log("User Document Data:", docSnap.data());
         return docSnap.data(); // or handle the data as needed
       } else {
-        console.log("No such user document!");
+        console.log("No user found!");
         return null; // Handle the case where the user document does not exist
       }
     } catch (error) {
@@ -63,7 +62,6 @@ const Signup = () => {
         formRef.current.reset();
 
         const userDoc = fetchUserByUID(cred.user.uid)
-        console.log('received user doc: ', userDoc)
 
         setUser(userDoc)
 
@@ -87,7 +85,7 @@ const Signup = () => {
           <input type="text" name='email' id='email' />
         </label>
         <label htmlFor="password">password:
-          <input type="text" name='password' id='password' />
+          <input type="password" name='password' id='password' />
         </label>
         <label htmlFor="fname">First Name:
           <input type="text" name='fname' />

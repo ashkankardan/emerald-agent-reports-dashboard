@@ -5,6 +5,7 @@ import Agent from './pages/agent/Agent';
 import Admin from './pages/admin/Admin';
 import Home from './pages/home/Home'
 import UserProvider from './contexts/user-context';
+import Login from './pages/login/Login';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/agent" element={<Agent />} />
           <Route path="/admin" element={<Admin />} />
         </Routes>

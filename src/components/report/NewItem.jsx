@@ -1,5 +1,5 @@
 import React, { useState, useContext, useRef } from 'react'
-import { MainContainer } from './Reports.styles'
+import { MainContainer } from './NewItem.styles'
 import {
   reportsRef,
   addDoc,
@@ -53,7 +53,6 @@ const NewItem = ({ setDisplayNewItem }) => {
         id: docRef.id
       })
 
-      console.log('Document written with ID: ', docRef.id)
       formRef.current.reset()
     } catch (e) {
       console.error('Error adding document: ', e)

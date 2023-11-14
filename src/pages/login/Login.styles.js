@@ -1,10 +1,7 @@
 import styled from "styled-components";
 
-
 export const MainContainer = styled.div`
 width: 100%;
 height: 100vh;
-background-color: black;
-box-sizing: border-box;
-padding: 10px 10px;
+color: white;
 `

@@ -1,5 +1,11 @@
-import React, { useRef, useEffect, useState } from 'react'
-import { doc, updateDoc, reportsRef, db } from '../../../config'
+import React, { useState, useRef, useContext } from 'react'
+import {
+  addDoc,
+  serverTimestamp,
+  reportsRef,
+  updateDoc,
+  doc
+} from '../../../config'
 import {
   BottomRow,
   Btn,
@@ -16,69 +22,75 @@ import {
   TopLeftCol,
   TopRightCol,
   TopRow
-} from './UpdateModal.styles'
+} from './NewModal.styles'
+import { UserContext } from '../../../contexts/user-context'
 
-const UpdateModal = ({ setDisplayUpdate, report }) => {
-  const [updatingReport, setUpdatingReport] = useState(false)
+const NewModal = ({ setDisplayNewItem }) => {
+  const [addingReport, setAddingReport] = useState(false)
 
+  const { user } = useContext(UserContext)
   const formRef = useRef(null)
 
-  // Setting default values when the component mounts
-  useEffect(() => {
-    if (report && formRef.current) {
-      formRef.current.elements['phone'].value = report.phone || ''
-      formRef.current.elements['name'].value = report.name || ''
-      formRef.current.elements['start-time'].value = report.startTime || ''
-      formRef.current.elements['duration'].value = report.duration || ''
-      formRef.current.elements['notes'].value = report.notes || ''
-      formRef.current.elements['enrolled'].checked = report.enrolled === true;
-      formRef.current.elements['enrolled-amount'].value =
-        report.enrolledAmount || ''
-      formRef.current.elements['notEnoughDebt'].checked =
-        report.notEnoughDebt || false
-      formRef.current.elements['transfer'].value = report.transfer || 1
+  const handleAddReport = async event => {
+    event.preventDefault()
+
+    setAddingReport(true)
+
+    if (!user) {
+      console.log('No user logged in')
+      setDisplayNewItem(false)
+      return
     }
-  }, [report])
-
-  const handleAddReport = async e => {
-    e.preventDefault()
-
-    setUpdatingReport(true)
 
     const formData = new FormData(formRef.current)
-    const updatedReport = {
-      phone: formData.get('phone'),
-      name: formData.get('name'),
-      startTime: formData.get('start-time'),
-      duration: formData.get('duration'),
-      notes: formData.get('notes'),
-      enrolled: formData.get('enrolled') === 'on',
-      enrolledAmount: formData.get('enrolled-amount'),
-      notEnoughDebt: formData.get('notEnoughDebt') === 'on',
-      transfer: parseInt(formData.get('transfer'), 10)
-    }
+    const name = formData.get('name')
+    const phone = formData.get('phone')
+    const transfer = formData.get('transfer')
+    const startTime = formData.get('start-time')
+    const duration = formData.get('duration')
+    const notes = formData.get('notes')
+    const enrolled = formData.get('enrolled') === 'on'
+    const notEnoughDebt = formData.get('notEnoughDebt') === 'on'
+    const enrolledAmount = formData.get('enrolled-amount')
 
-    // Update the document in Firestore
-    const docRef = doc(db, 'reports', report.id) // Replace 'yourCollectionName' with your actual collection name
     try {
-      await updateDoc(docRef, updatedReport)
-    } catch (error) {
-      console.error('Error updating report: ', error)
+      const docRef = await addDoc(reportsRef, {
+        agentId: user.id,
+        createdAt: serverTimestamp(),
+        name,
+        phone,
+        transfer,
+        startTime,
+        duration,
+        notes,
+        enrolled,
+        notEnoughDebt,
+        enrolledAmount
+      })
+
+      // Then, update the document with its generated ID
+      await updateDoc(doc(reportsRef, docRef.id), {
+        id: docRef.id
+      })
+
+      // console.log('Document written with ID: ', docRef.id)
+      formRef.current.reset()
+    } catch (e) {
+      console.error('Error adding document: ', e)
     }
 
-    setUpdatingReport(false)
-    setDisplayUpdate(false)
+    setAddingReport(false)
+    setDisplayNewItem(false)
   }
 
   const handleCloseModal = () => {
-    setDisplayUpdate(false)
+    setDisplayNewItem(false)
   }
 
   return (
     <MainContainer>
       <ModalContent>
         <CloseIcon onClick={handleCloseModal}>X</CloseIcon>
-
         <form ref={formRef} onSubmit={handleAddReport}>
           <TopRow>
             <TopLeftCol>
@@ -172,7 +184,9 @@ const UpdateModal = ({ setDisplayUpdate, report }) => {
           </BottomRow>
 
           <BtnContainer>
-            <Btn disabled={updatingReport} type='submit'>Update Report</Btn>
+            <Btn disabled={addingReport} type='submit'>
+              Add Report
+            </Btn>
           </BtnContainer>
         </form>
       </ModalContent>
@@ -180,4 +194,4 @@ const UpdateModal = ({ setDisplayUpdate, report }) => {
   )
 }
 
-export default UpdateModal
+export default NewModal
