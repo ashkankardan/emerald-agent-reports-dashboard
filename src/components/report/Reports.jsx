@@ -100,7 +100,9 @@ const Reports = () => {
             <TableHead>Notes</TableHead>
             <TableHead>Enrolled</TableHead>
             <TableHead>Enrolled Amount</TableHead>
-            <TableHead>Not Enough Debt</TableHead>
+            {user.department !== 'tax' && (
+              <TableHead>Not Enough Debt</TableHead>
+            )}
             <TableHead>Actions</TableHead>
           </TableRow>
         </thead>
