@@ -99,9 +99,17 @@ const Reports = () => {
             <TableHead>Duration</TableHead>
             <TableHead>Notes</TableHead>
             <TableHead>Enrolled</TableHead>
-            <TableHead>Enrolled Amount</TableHead>
-            {user.department !== 'tax' && (
-              <TableHead>Not Enough Debt</TableHead>
+
+            {user.department !== 'tax' ? (
+              <>
+                <TableHead>Enrolled Amount</TableHead>
+                <TableHead>Not Enough Debt</TableHead>
+              </>
+            ) : (
+              <>
+                <TableHead>State Liability</TableHead>
+                <TableHead>Federal Liability</TableHead>
+              </>
             )}
             <TableHead>Actions</TableHead>
           </TableRow>

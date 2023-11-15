@@ -38,11 +38,17 @@ const UpdateModal = ({ setDisplayUpdate, report }) => {
       setDuration(report.duration || '')
       formRef.current.elements['notes'].value = report.notes || ''
       formRef.current.elements['enrolled'].checked = report.enrolled === true
-      formRef.current.elements['enrolled-amount'].value =
-        report.enrolledAmount || ''
       if (user.department !== 'tax') {
+        formRef.current.elements['enrolled-amount'].value =
+          report.enrolledAmount || ''
         formRef.current.elements['notEnoughDebt'].checked =
           report.notEnoughDebt || false
+      } else {
+        formRef.current.elements['state-liability'].value =
+          report.stateLiability || ''
+
+        formRef.current.elements['federal-liability'].value =
+          report.federalLiability || ''
       }
       formRef.current.elements['transfer'].value = report.transfer || 1
     }
@@ -62,6 +68,8 @@ const UpdateModal = ({ setDisplayUpdate, report }) => {
       notes: formData.get('notes'),
       enrolled: formData.get('enrolled') === 'on',
       enrolledAmount: formData.get('enrolled-amount'),
+      stateLiability: formData.get('state-liability'),
+      federalLiability: formData.get('federal-liability'),
       notEnoughDebt: formData.get('notEnoughDebt') === 'on',
       transfer: parseInt(formData.get('transfer'), 10)
     }
@@ -201,24 +209,49 @@ const UpdateModal = ({ setDisplayUpdate, report }) => {
                 <CheckboxInput type='checkbox' id='enrolled' name='enrolled' />
               </InputRow>
 
-              <InputRow>
-                <Label htmlFor='enrolled-amount'>Enrolled Amount:</Label>
-                <Input
-                  id='enrolled-amount'
-                  type='text'
-                  name='enrolled-amount'
-                  placeholder='Enrolled Amount'
-                />
-              </InputRow>
-              {user.department !== 'tax' && (
-                <InputRow>
-                  <Label htmlFor='notEnoughDebt'>Not Enough Debt:</Label>
-                  <CheckboxInput
-                    type='checkbox'
-                    id='notEnoughDebt'
-                    name='notEnoughDebt'
-                  />
-                </InputRow>
+              {user.department !== 'tax' ? (
+                <>
+                  <InputRow>
+                    <Label htmlFor='notEnoughDebt'>Not Enough Debt:</Label>
+                    <CheckboxInput
+                      type='checkbox'
+                      id='notEnoughDebt'
+                      name='notEnoughDebt'
+                    />
+                  </InputRow>
+                  <InputRow>
+                    <Label htmlFor='enrolled-amount'>Enrolled Amount:</Label>
+                    <Input
+                      id='enrolled-amount'
+                      type='text'
+                      name='enrolled-amount'
+                      placeholder='Enrolled Amount'
+                    />
+                  </InputRow>
+                </>
+              ) : (
+                <>
+                  <InputRow>
+                    <Label htmlFor='state-liability'>State Liability:</Label>
+                    <Input
+                      type='text'
+                      id='state-liability'
+                      name='state-liability'
+                      placeholder='State Liability'
+                    />
+                  </InputRow>
+                  <InputRow>
+                    <Label htmlFor='federal-liability'>
+                      Federal Liability:
+                    </Label>
+                    <Input
+                      type='text'
+                      id='federal-liability'
+                      name='federal-liability'
+                      placeholder='Federal Liability'
+                    />
+                  </InputRow>
+                </>
               )}
             </TopRightCol>
           </TopRow>
