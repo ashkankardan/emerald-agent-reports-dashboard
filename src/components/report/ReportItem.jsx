@@ -25,7 +25,7 @@ const ReportItem = ({ report, setItemToUpdate, setDisplayUpdate, agent }) => {
       {user.department !== 'tax' ? (
         <>
           <TableData>{report.enrolledAmount}</TableData>
-          <TableData>{report.notEnoughDebt ? 'Yes' : '-'}</TableData>
+          <TableData>{report.notEnoughDebt ? 'NED' : '-'}</TableData>
         </>
       ) : (
         <>
