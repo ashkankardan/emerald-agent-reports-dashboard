@@ -22,9 +22,16 @@ const ReportItem = ({ report, setItemToUpdate, setDisplayUpdate, agent }) => {
       <TableData>{report.duration}</TableData>
       <TableData>{report.notes}</TableData>
       <TableData>{report.enrolled ? 'Yes' : 'No'}</TableData>
-      <TableData>{report.enrolledAmount}</TableData>
-      {user.department !== 'tax' && (
-        <TableData>{report.notEnoughDebt ? 'Yes' : '-'}</TableData>
+      {user.department !== 'tax' ? (
+        <>
+          <TableData>{report.enrolledAmount}</TableData>
+          <TableData>{report.notEnoughDebt ? 'Yes' : '-'}</TableData>
+        </>
+      ) : (
+        <>
+          <TableData>{report.stateLiability}</TableData>
+          <TableData>{report.federalLiability}</TableData>
+        </>
       )}
       <TableData>
         <button onClick={handleOpenUpdateModal}>Update</button>

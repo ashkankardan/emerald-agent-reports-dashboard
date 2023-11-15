@@ -52,6 +52,8 @@ const NewModal = ({ setDisplayNewItem }) => {
     const enrolled = formData.get('enrolled') === 'on'
     const notEnoughDebt = formData.get('notEnoughDebt') === 'on'
     const enrolledAmount = formData.get('enrolled-amount')
+    const stateLiability = formData.get('state-liability')
+    const federalLiability = formData.get('federal-liability')
 
     try {
       const docRef = await addDoc(reportsRef, {
@@ -65,7 +67,9 @@ const NewModal = ({ setDisplayNewItem }) => {
         notes,
         enrolled,
         notEnoughDebt,
-        enrolledAmount
+        enrolledAmount,
+        stateLiability,
+        federalLiability
       })
 
       // Then, update the document with its generated ID
@@ -207,24 +211,49 @@ const NewModal = ({ setDisplayNewItem }) => {
                 <CheckboxInput type='checkbox' id='enrolled' name='enrolled' />
               </InputRow>
 
-              <InputRow>
-                <Label htmlFor='enrolled-amount'>Enrolled Amount:</Label>
-                <Input
-                  id='enrolled-amount'
-                  type='text'
-                  name='enrolled-amount'
-                  placeholder='Enrolled Amount'
-                />
-              </InputRow>
-              {user.department !== 'tax' && (
-                <InputRow>
-                  <Label htmlFor='notEnoughDebt'>Not Enough Debt:</Label>
-                  <CheckboxInput
-                    type='checkbox'
-                    id='notEnoughDebt'
-                    name='notEnoughDebt'
-                  />
-                </InputRow>
+              {user.department !== 'tax' ? (
+                <>
+                  <InputRow>
+                    <Label htmlFor='enrolled-amount'>Enrolled Amount:</Label>
+                    <Input
+                      id='enrolled-amount'
+                      type='text'
+                      name='enrolled-amount'
+                      placeholder='Enrolled Amount'
+                    />
+                  </InputRow>
+                  <InputRow>
+                    <Label htmlFor='notEnoughDebt'>Not Enough Debt:</Label>
+                    <CheckboxInput
+                      type='checkbox'
+                      id='notEnoughDebt'
+                      name='notEnoughDebt'
+                    />
+                  </InputRow>
+                </>
+              ) : (
+                <>
+                  <InputRow>
+                    <Label htmlFor='state-liability'>State Liability:</Label>
+                    <Input
+                      type='text'
+                      id='state-liability'
+                      name='state-liability'
+                      placeholder='State Liability'
+                    />
+                  </InputRow>
+                  <InputRow>
+                    <Label htmlFor='federal-liability'>
+                      Federal Liability:
+                    </Label>
+                    <Input
+                      type='text'
+                      id='federal-liability'
+                      name='federal-liability'
+                      placeholder='Federal Liability'
+                    />
+                  </InputRow>
+                </>
               )}
             </TopRightCol>
           </TopRow>
