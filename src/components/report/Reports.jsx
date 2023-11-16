@@ -6,7 +6,8 @@ import {
   ReportTable,
   SectionNavContainer,
   TableHead,
-  TableRow
+  TableRow,
+  ReportMainContent
 } from './Reports.styles'
 import { UserContext } from '../../contexts/user-context'
 import {
@@ -88,44 +89,44 @@ const Reports = () => {
       </SectionNavContainer>
 
       {displayNewItem && <NewModal setDisplayNewItem={setDisplayNewItem} />}
+      <ReportMainContent>
+        <ReportTable>
+          <thead>
+            <TableRow>
+              <TableHead>TSFR #</TableHead>
+              <TableHead>Phone #</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Start Time</TableHead>
+              <TableHead>Duration</TableHead>
+              <TableHead>Notes</TableHead>
+              <TableHead>Enrolled</TableHead>
 
-      <ReportTable>
-        <thead>
-          <TableRow>
-            <TableHead>TSFR #</TableHead>
-            <TableHead>Phone #</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Start Time</TableHead>
-            <TableHead>Duration</TableHead>
-            <TableHead>Notes</TableHead>
-            <TableHead>Enrolled</TableHead>
-
-            {user.department !== 'tax' ? (
-              <>
-                <TableHead>Enrolled Amount</TableHead>
-                <TableHead>Not Enough Debt</TableHead>
-              </>
-            ) : (
-              <>
-                <TableHead>State Liability</TableHead>
-                <TableHead>Federal Liability</TableHead>
-              </>
-            )}
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </thead>
-        <tbody>
-          {reports.map(report => (
-            <ReportItem
-              setItemToUpdate={setItemToUpdate}
-              setDisplayUpdate={setDisplayUpdate}
-              key={report.id}
-              report={report}
-            />
-          ))}
-        </tbody>
-      </ReportTable>
-
+              {user.department !== 'tax' ? (
+                <>
+                  <TableHead>Enrolled Amount</TableHead>
+                  <TableHead>Not Enough Debt</TableHead>
+                </>
+              ) : (
+                <>
+                  <TableHead>State Liability</TableHead>
+                  <TableHead>Federal Liability</TableHead>
+                </>
+              )}
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </thead>
+          <tbody>
+            {reports.map(report => (
+              <ReportItem
+                setItemToUpdate={setItemToUpdate}
+                setDisplayUpdate={setDisplayUpdate}
+                key={report.id}
+                report={report}
+              />
+            ))}
+          </tbody>
+        </ReportTable>
+      </ReportMainContent>
       {displayUpdateItem && (
         <UpdateModal
           setDisplayUpdate={setDisplayUpdate}
