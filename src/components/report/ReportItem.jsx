@@ -33,6 +33,13 @@ const ReportItem = ({ report, setItemToUpdate, setDisplayUpdate, agent }) => {
           <TableData>{report.federalLiability}</TableData>
         </>
       )}
+
+      {(user.role === 'admin' || user.role === 'super-admin') && (
+        <>
+          <TableData>{report.stateLiability}</TableData>
+          <TableData>{report.federalLiability}</TableData>
+        </>
+      )}
       <TableData>
         <button onClick={handleOpenUpdateModal}>Update</button>
       </TableData>

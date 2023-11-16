@@ -20,6 +20,7 @@ import {
   ReportTable,
   SectionNavContainer,
   SelectInput,
+  TableBody,
   TableHead,
   TableRow
 } from './AdminReports.styles'
@@ -188,6 +189,8 @@ const AdminReports = () => {
             <TableHead>Enrolled</TableHead>
             <TableHead>Enrolled Amount</TableHead>
             <TableHead>Not Enough Debt</TableHead>
+            <TableHead>State Liability</TableHead>
+            <TableHead>Federal Liability</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </thead>

@@ -36,31 +36,37 @@ export const Btn = styled.div`
 `
 
 export const InputRow = styled.div`
-width: 100%;
-margin-bottom: 15px;
-height: 30px;
-display: flex;
-align-items: center;
+  width: 100%;
+  margin-bottom: 15px;
+  height: 30px;
+  display: flex;
+  align-items: center;
 `
 
 export const Label = styled.label`
-margin-right: 10px;
-display: inline-block;
-font-weight: bold;
+  margin-right: 10px;
+  display: inline-block;
+  font-weight: bold;
 `
 
 export const SelectInput = styled.select`
-/* width: 50px; */
-border-radius: 5px;
-outline: none;
-height: 25px;
-padding: 0 5px;
-cursor: pointer;
+  /* width: 50px; */
+  border-radius: 5px;
+  outline: none;
+  height: 25px;
+  padding: 0 5px;
+  cursor: pointer;
 `
 
 export const ReportTable = styled.table`
   border-collapse: collapse;
   width: 100%;
+  height: 400px;
+  overflow-y: auto;
+  display: block;
+  padding-right: 10px;
+  box-sizing: border-box;
+  min-height: calc(100vh - 210px);
 `
 export const TableHead = styled.th`
   border: 1px solid purple;
