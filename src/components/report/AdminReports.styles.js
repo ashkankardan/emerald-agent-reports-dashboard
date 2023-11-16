@@ -10,6 +10,10 @@ export const MainContainer = styled.div`
   box-sizing: border-box;
 `
 
+export const ReportMainContent = styled.div`
+width: 100%;
+`
+
 export const SectionNavContainer = styled.div`
   width: 100%;
   display: flex;
@@ -59,26 +63,70 @@ export const SelectInput = styled.select`
 `
 
 export const ReportTable = styled.table`
-  border-collapse: collapse;
   width: 100%;
-  height: 400px;
-  overflow-y: auto;
-  display: block;
-  padding-right: 10px;
-  box-sizing: border-box;
-  min-height: calc(100vh - 210px);
-`
+  border-collapse: collapse;
+  table-layout: fixed;
+
+  thead {
+    width: calc(100% - 15px);
+    display: table;
+    table-layout: fixed;
+
+    th:last-child::after {
+      content: '';
+      display: block;
+      width: 15px; // Approximate scrollbar width
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+    }
+  }
+
+  tbody {
+    display: block;
+    width: 100%;
+    overflow-y: scroll;
+    max-height: 700px;
+
+// Scrollbar track
+&::-webkit-scrollbar {
+    width: 15px; // Width of the scrollbar
+  }
+
+  // Scrollbar handle
+  &::-webkit-scrollbar-thumb {
+    background: purple; // Color of the scrollbar thumb
+  }
+
+  // Scrollbar track
+  &::-webkit-scrollbar-track {
+    background: gray; // Color of the scrollbar track
+  }
+
+  }
+
+  th, td {
+    border: 1px solid purple;
+    text-align: left;
+    padding: 8px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  }
+`;
+
+
 export const TableHead = styled.th`
   border: 1px solid purple;
-  /* width: 50px; */
   text-align: left;
   padding: 8px;
-  /* background-color: #f2f2f2; */
 `
 
 export const TableRow = styled.tr`
-  border-bottom: 2px solid purple;
-`
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+`;
 
 export const Divider = styled.div`
   width: 100%;

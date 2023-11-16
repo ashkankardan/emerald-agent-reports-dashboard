@@ -22,7 +22,8 @@ import {
   SelectInput,
   TableBody,
   TableHead,
-  TableRow
+  TableRow,
+  ReportMainContent
 } from './AdminReports.styles'
 
 const AdminReports = () => {
@@ -175,37 +176,38 @@ const AdminReports = () => {
           </SelectInput>
         </InputRow>
       </SectionNavContainer>
-
-      <ReportTable>
-        <thead>
-          <TableRow>
-            <TableHead>Agent</TableHead>
-            <TableHead>TSFR #</TableHead>
-            <TableHead>Phone #</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Start Time</TableHead>
-            <TableHead>Duration</TableHead>
-            <TableHead>Notes</TableHead>
-            <TableHead>Enrolled</TableHead>
-            <TableHead>Enrolled Amount</TableHead>
-            <TableHead>Not Enough Debt</TableHead>
-            <TableHead>State Liability</TableHead>
-            <TableHead>Federal Liability</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </thead>
-        <tbody>
-          {reports.map(report => (
-            <ReportItem
-              setItemToUpdate={setItemToUpdate}
-              setDisplayUpdate={setDisplayUpdate}
-              key={report.id}
-              report={report}
-              agent={getAgentName(report.agentId)}
-            />
-          ))}
-        </tbody>
-      </ReportTable>
+      <ReportMainContent>
+        <ReportTable>
+          <thead>
+            <TableRow>
+              <TableHead>Agent</TableHead>
+              <TableHead>TSFR #</TableHead>
+              <TableHead>Phone #</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Start Time</TableHead>
+              <TableHead>Duration</TableHead>
+              <TableHead>Notes</TableHead>
+              <TableHead>Enrolled</TableHead>
+              <TableHead>Enrolled Amount</TableHead>
+              <TableHead>Not Enough Debt</TableHead>
+              <TableHead>State Liability</TableHead>
+              <TableHead>Federal Liability</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </thead>
+          <tbody>
+            {reports.map(report => (
+              <ReportItem
+                setItemToUpdate={setItemToUpdate}
+                setDisplayUpdate={setDisplayUpdate}
+                key={report.id}
+                report={report}
+                agent={getAgentName(report.agentId)}
+              />
+            ))}
+          </tbody>
+        </ReportTable>
+      </ReportMainContent>
 
       {displayUpdateItem && (
         <UpdateModal
