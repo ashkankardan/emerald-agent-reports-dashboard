@@ -22,6 +22,8 @@ import NewItem from './NewItem'
 import ReportItem from './ReportItem'
 import UpdateModal from '../modals/update/UpdateModal'
 import NewModal from '../modals/new/NewModal'
+import { DebtTableHead } from './DebtTable.style'
+import { TaxTableHead } from './TaxTable.style'
 
 const Reports = () => {
   const { user } = useContext(UserContext)
@@ -32,6 +34,8 @@ const Reports = () => {
 
   useEffect(() => {
     if (!user) return
+
+    console.log(user)
 
     // // For example, querying documents created on November 11, 2023 in UTC-8
     // const startOfDate = new Date('2023-11-13T00:00:00-08:00') // Start of day in UTC-8
@@ -93,25 +97,48 @@ const Reports = () => {
         <ReportTable>
           <thead>
             <TableRow>
-              <TableHead>TSFR #</TableHead>
-              <TableHead>Phone #</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Start Time</TableHead>
-              <TableHead>Duration</TableHead>
-              <TableHead>Notes</TableHead>
-              <TableHead>Enrolled</TableHead>
-
-              {user.department !== 'tax' ? (
+              {(user.role === 'admin' || user.role === 'super-admin') && (
                 <>
+                  <TableHead>TSFR #</TableHead>
+                  <TableHead>Phone #</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Start Time</TableHead>
+                  <TableHead>Duration</TableHead>
+                  <TableHead>Notes</TableHead>
+                  <TableHead>Enrolled</TableHead>
                   <TableHead>Enrolled Amount</TableHead>
                   <TableHead>Not Enough Debt</TableHead>
                 </>
-              ) : (
+              )}
+
+              {user.department === 'debt' && (
                 <>
-                  <TableHead>State Liability</TableHead>
-                  <TableHead>Federal Liability</TableHead>
+                  <DebtTableHead>TSFR #</DebtTableHead>
+                  <DebtTableHead>Phone #</DebtTableHead>
+                  <DebtTableHead>Name</DebtTableHead>
+                  <DebtTableHead>Start Time</DebtTableHead>
+                  <DebtTableHead>Duration</DebtTableHead>
+                  <DebtTableHead>Notes</DebtTableHead>
+                  <DebtTableHead>Enrolled</DebtTableHead>
+                  <DebtTableHead>Enrolled Amount</DebtTableHead>
+                  <DebtTableHead>Not Enough Debt</DebtTableHead>
                 </>
               )}
+
+              {user.department === 'tax' && (
+                <>
+                  <TaxTableHead>TSFR #</TaxTableHead>
+                  <TaxTableHead>Phone #</TaxTableHead>
+                  <TaxTableHead>Name</TaxTableHead>
+                  <TaxTableHead>Start Time</TaxTableHead>
+                  <TaxTableHead>Duration</TaxTableHead>
+                  <TaxTableHead>Notes</TaxTableHead>
+                  <TaxTableHead>Enrolled</TaxTableHead>
+                  <TaxTableHead>State Liability</TaxTableHead>
+                  <TaxTableHead>Federal Liability</TaxTableHead>
+                </>
+              )}
+
               <TableHead>Actions</TableHead>
             </TableRow>
           </thead>
