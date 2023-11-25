@@ -35,6 +35,10 @@ const AdminReports = () => {
   const [byTransfer, setByTransfer] = useState('all')
   const [byAgent, setByAgent] = useState('all')
   const [agents, setAgents] = useState([])
+  const [startDate, setStartDate] = useState(
+    new Date().toISOString().split('T')[0]
+  )
+  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0])
 
   const handleTransferChange = e => {
     setByTransfer(e.target.value)
@@ -42,6 +46,11 @@ const AdminReports = () => {
 
   const handleAgentChange = e => {
     setByAgent(e.target.value)
+  }
+
+  const handleStartDateChange = e => {
+    setStartDate(e.target.value)
+    setEndDate(e.target.value)
   }
 
   const fetchAllUsers = async () => {
@@ -73,29 +82,30 @@ const AdminReports = () => {
     fetchAllUsers()
   }, [user])
 
-  // useEffect(() => {
-  //   console.log('All User Documents:', agents)
-  // }, [agents])
-
   useEffect(() => {
     if (!user) return
 
-    // For example, querying documents created on November 11, 2023 in UTC-8
-    // const startOfDate = new Date('2023-11-11T00:00:00-08:00') // Start of day in UTC-8
-    // const endOfDate = new Date('2023-11-11T23:59:59-08:00') // End of day in UTC-8
+    // Define the offset for UTC-8 in minutes
+    const offset = 1440 // Offset for UTC-8
 
-    // Get the current date in UTC
-    const now = new Date()
+    // Function to adjust date with the UTC-8 offset
+    const adjustDateWithOffset = date => {
+      const adjustedDate = new Date(date)
+      adjustedDate.setMinutes(adjustedDate.getMinutes() + offset)
+      return adjustedDate
+    }
 
-    // Convert it to UTC-8
-    const offset = 1 // Offset in minutes for UTC-8
-    const nowInUTC8 = new Date(now.getTime() + offset * 60000)
+    // Use today's date if start or end date is not selected
+    let selectedStartDate = startDate ? new Date(startDate) : new Date()
+    let selectedEndDate = endDate ? new Date(endDate) : new Date()
 
-    // Set the start and end of the day in UTC-8
-    const startOfDate = new Date(nowInUTC8.setHours(0, 0, 0, 0))
-    const endOfDate = new Date(nowInUTC8.setHours(23, 59, 59, 999))
+    selectedStartDate = adjustDateWithOffset(selectedStartDate)
+    selectedEndDate = adjustDateWithOffset(selectedEndDate)
 
-    // Convert to Firestore Timestamp
+    const startOfDate = new Date(selectedStartDate.setHours(0, 0, 0, 0))
+    const endOfDate = new Date(selectedEndDate.setHours(23, 59, 59, 999))
+
+    // Convert to Firestore Timestamps
     const startTimestamp = Timestamp.fromDate(startOfDate)
     const endTimestamp = Timestamp.fromDate(endOfDate)
 
@@ -132,7 +142,7 @@ const AdminReports = () => {
 
     // Cleanup subscription on unmount
     return () => unsubscribe()
-  }, [user, byTransfer, byAgent])
+  }, [user, byTransfer, byAgent, startDate, endDate])
 
   return (
     <MainContainer>
@@ -175,12 +185,33 @@ const AdminReports = () => {
             ))}
           </SelectInput>
         </InputRow>
+
+        <InputRow>
+          <Label htmlFor='start-date'>Start Date:</Label>
+          <input
+            type='date'
+            id='start-date'
+            value={startDate}
+            onChange={e => handleStartDateChange(e)}
+          />
+        </InputRow>
+
+        <InputRow>
+          <Label htmlFor='end-date'>End Date:</Label>
+          <input
+            type='date'
+            id='end-date'
+            value={endDate}
+            onChange={e => setEndDate(e.target.value)}
+          />
+        </InputRow>
       </SectionNavContainer>
       <ReportMainContent>
         <ReportTable>
           <thead>
             <TableRow>
               <TableHead>Agent</TableHead>
+              <TableHead>Date</TableHead>
               <TableHead>TSFR #</TableHead>
               <TableHead>Phone #</TableHead>
               <TableHead>Name</TableHead>
