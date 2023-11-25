@@ -3,6 +3,7 @@ import { TableData, TableRow } from './ReportItem.styles'
 import { UserContext } from '../../contexts/user-context'
 import { DebtTableData } from './DebtTable.style'
 import { TaxTableData } from './TaxTable.style'
+import { format } from 'date-fns';
 
 const ReportItem = ({ report, setItemToUpdate, setDisplayUpdate, agent }) => {
   const { user } = useContext(UserContext)
@@ -12,11 +13,18 @@ const ReportItem = ({ report, setItemToUpdate, setDisplayUpdate, agent }) => {
     setItemToUpdate(report)
   }
 
+  // Convert Firestore Timestamp to JavaScript Date and format it
+  const createdAtFormatted = report.createdAt
+    ? format(report.createdAt.toDate(), 'MM/dd/yy') // For "MM/DD/YYYY" format
+    // ? format(report.createdAt.toDate(), 'MMM dd yyyy') // Uncomment for "MMM DD YYYY" format
+    : 'N/A';
+
   return (
     <TableRow>
       {(user.role === 'admin' || user.role === 'super-admin') && (
         <>
           <TableData>{agent}</TableData>
+          <TableData>{createdAtFormatted}</TableData>
           <TableData>{report.transfer}</TableData>
           <TableData>{report.phone}</TableData>
           <TableData>{report.name}</TableData>

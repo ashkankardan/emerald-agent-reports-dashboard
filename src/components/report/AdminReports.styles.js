@@ -122,18 +122,19 @@ export const TableHead = styled.th`
   padding: 8px;
 
   &:nth-child(1) { width: 100px; }
-  &:nth-child(2) { width: 60px; }
-  &:nth-child(3) { width: 120px; }
-  &:nth-child(4) { width: 100px; }
-  &:nth-child(5) { width: 90px; }
-  &:nth-child(6) { width: 87px; }
+  &:nth-child(2) { width: 80px; }
+  &:nth-child(3) { width: 60px; }
+  &:nth-child(4) { width: 120px; }
+  &:nth-child(5) { width: 100px; }
+  &:nth-child(6) { width: 90px; }
+  &:nth-child(7) { width: 87px; }
 
-  &:nth-child(8) { width: 81px; }
-  &:nth-child(9) { width: 100px; }
-  &:nth-child(10) { width: 80px; }
-  &:nth-child(11) { width: 100px; }
+  &:nth-child(9) { width: 81px; }
+  &:nth-child(10) { width: 100px; }
+  &:nth-child(11) { width: 80px; }
   &:nth-child(12) { width: 100px; }
-  &:nth-child(13) { width: 80px; }
+  &:nth-child(13) { width: 100px; }
+  &:nth-child(14) { width: 80px; }
 
 `
 
