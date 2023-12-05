@@ -33,6 +33,7 @@ const AdminReports = () => {
   const [displayUpdateItem, setDisplayUpdate] = useState(false)
   const [itemToUpdate, setItemToUpdate] = useState(null)
   const [byTransfer, setByTransfer] = useState('all')
+  const [byDepartment, setByDepartment] = useState('all')
   const [byAgent, setByAgent] = useState('all')
   const [agents, setAgents] = useState([])
   const [startDate, setStartDate] = useState(
@@ -44,6 +45,10 @@ const AdminReports = () => {
 
   const handleTransferChange = e => {
     setByTransfer(e.target.value)
+  }
+
+  const handleDepartmentChange = e => {
+    setByDepartment(e.target.value)
   }
 
   const handleAgentChange = e => {
@@ -78,6 +83,21 @@ const AdminReports = () => {
     return `${firstName} ${lastName}`
   }
 
+  const getDepartmentUserIds = async () => {
+    try {
+      const usersQuery = query(
+        usersRef,
+        where('department', '==', byDepartment)
+      )
+      const userSnapshot = await getDocs(usersQuery)
+      const userIds = userSnapshot.docs.map(doc => doc.id)
+
+      return userIds
+    } catch (error) {
+      console.log('Error getting userIds: ', error)
+    }
+  }
+
   useEffect(() => {
     if (!user) return
 
@@ -87,64 +107,89 @@ const AdminReports = () => {
   useEffect(() => {
     if (!user) return
 
-    // Define the offset for UTC-8 in minutes
-    const offset = 1440 // Offset for UTC-8
+    let unsubscribe
 
-    // Function to adjust date with the UTC-8 offset
-    const adjustDateWithOffset = date => {
-      const adjustedDate = new Date(date)
-      adjustedDate.setMinutes(adjustedDate.getMinutes() + offset)
-      return adjustedDate
-    }
+    const fetchData = async () => {
+      // Define the offset for UTC-8 in minutes
+      const offset = 1440 // Offset for UTC-8
 
-    // Use today's date if start or end date is not selected
-    let selectedStartDate = startDate ? new Date(startDate) : new Date()
-    let selectedEndDate = endDate ? new Date(endDate) : new Date()
-
-    selectedStartDate = adjustDateWithOffset(selectedStartDate)
-    selectedEndDate = adjustDateWithOffset(selectedEndDate)
-
-    const startOfDate = new Date(selectedStartDate.setHours(0, 0, 0, 0))
-    const endOfDate = new Date(selectedEndDate.setHours(23, 59, 59, 999))
-
-    // Convert to Firestore Timestamps
-    const startTimestamp = Timestamp.fromDate(startOfDate)
-    const endTimestamp = Timestamp.fromDate(endOfDate)
-
-    let conditions = [
-      where('createdAt', '>=', startTimestamp),
-      where('createdAt', '<=', endTimestamp)
-    ]
-
-    if (byTransfer !== 'all') {
-      conditions.push(where('transfer', '==', Number(byTransfer)))
-    }
-
-    if (byAgent !== 'all') {
-      conditions.push(where('agentId', '==', byAgent))
-    }
-
-    // Create a compound query
-    const reportsQuery = query(reportsRef, ...conditions)
-
-    // Real-time subscription
-    const unsubscribe = onSnapshot(
-      reportsQuery,
-      snapshot => {
-        let tempReports = []
-        snapshot.forEach(doc => {
-          tempReports.push({ ...doc.data(), id: doc.id })
-        })
-        setReports(tempReports)
-      },
-      err => {
-        console.error('Error fetching reports: ', err.message)
+      // Function to adjust date with the UTC-8 offset
+      const adjustDateWithOffset = date => {
+        const adjustedDate = new Date(date)
+        adjustedDate.setMinutes(adjustedDate.getMinutes() + offset)
+        return adjustedDate
       }
-    )
 
-    // Cleanup subscription on unmount
-    return () => unsubscribe()
-  }, [user, byTransfer, byAgent, startDate, endDate])
+      // Use today's date if start or end date is not selected
+      let selectedStartDate = startDate ? new Date(startDate) : new Date()
+      let selectedEndDate = endDate ? new Date(endDate) : new Date()
+
+      selectedStartDate = adjustDateWithOffset(selectedStartDate)
+      selectedEndDate = adjustDateWithOffset(selectedEndDate)
+
+      const startOfDate = new Date(selectedStartDate.setHours(0, 0, 0, 0))
+      const endOfDate = new Date(selectedEndDate.setHours(23, 59, 59, 999))
+
+      // Convert to Firestore Timestamps
+      const startTimestamp = Timestamp.fromDate(startOfDate)
+      const endTimestamp = Timestamp.fromDate(endOfDate)
+
+      let conditions = [
+        where('createdAt', '>=', startTimestamp),
+        where('createdAt', '<=', endTimestamp)
+      ]
+
+      if (byTransfer !== 'all') {
+        conditions.push(where('transfer', '==', Number(byTransfer)))
+      }
+
+      if (byDepartment !== 'all') {
+        try {
+          // Await the result of getDepartmentUserIds
+          const departmentUserIds = await getDepartmentUserIds()
+
+          if (departmentUserIds && departmentUserIds.length > 0) {
+            conditions.push(where('agentId', 'in', departmentUserIds))
+          }
+        } catch (error) {
+          console.error('Error getting department user IDs:', error)
+        }
+      }
+
+      if (byAgent !== 'all') {
+        conditions.push(where('agentId', '==', byAgent))
+      }
+
+      // Create a compound query
+      const reportsQuery = query(reportsRef, ...conditions)
+
+      // Real-time subscription
+      unsubscribe = onSnapshot(
+        reportsQuery,
+        snapshot => {
+          let tempReports = []
+          snapshot.forEach(doc => {
+            tempReports.push({ ...doc.data(), id: doc.id })
+          })
+          setReports(tempReports)
+        },
+        err => {
+          console.error('Error fetching reports: ', err.message)
+        }
+      )
+
+      // Cleanup subscription on unmount
+      return unsubscribe
+    }
+
+    // Call the async function
+    fetchData()
+
+    // Cleanup function
+    return () => {
+      if (unsubscribe) unsubscribe()
+    }
+  }, [user, byTransfer, byDepartment, byAgent, startDate, endDate])
 
   useEffect(() => {
     // Scroll to the bottom of the table container whenever rows are updated
@@ -175,6 +220,25 @@ const AdminReports = () => {
                 {index + 1}
               </option>
             ))}
+          </SelectInput>
+        </InputRow>
+
+        <InputRow>
+          <Label htmlFor='department'>Department:</Label>
+          <SelectInput
+            id='department'
+            name='department'
+            onChange={handleDepartmentChange}
+          >
+            <option key='all' value='all'>
+              All
+            </option>
+            <option key='debt' value='debt'>
+              Debt
+            </option>
+            <option key='tax' value='tax'>
+              Tax
+            </option>
           </SelectInput>
         </InputRow>
 

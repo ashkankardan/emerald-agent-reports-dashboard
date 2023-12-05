@@ -37,8 +37,6 @@ const Reports = () => {
   useEffect(() => {
     if (!user) return
 
-    console.log(user)
-
     // // For example, querying documents created on November 11, 2023 in UTC-8
     // const startOfDate = new Date('2023-11-13T00:00:00-08:00') // Start of day in UTC-8
     // const endOfDate = new Date('2023-11-13T23:59:59-08:00') // End of day in UTC-8
