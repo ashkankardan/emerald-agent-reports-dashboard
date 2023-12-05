@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext, useRef } from 'react'
 import {
   Btn,
   Divider,
@@ -31,6 +31,8 @@ const Reports = () => {
   const [displayNewItem, setDisplayNewItem] = useState(false)
   const [displayUpdateItem, setDisplayUpdate] = useState(false)
   const [itemToUpdate, setItemToUpdate] = useState(null)
+
+  const tableContainerRef = useRef(null)
 
   useEffect(() => {
     if (!user) return
@@ -83,6 +85,14 @@ const Reports = () => {
     // Cleanup subscription on unmount
     return () => unsubscribe()
   }, [user])
+
+  useEffect(() => {
+    // Scroll to the bottom of the table container whenever rows are updated
+    if (tableContainerRef.current) {
+      const { scrollHeight, clientHeight } = tableContainerRef.current
+      tableContainerRef.current.scrollTop = scrollHeight - clientHeight
+    }
+  }, [reports])
 
   return (
     <MainContainer>
@@ -142,7 +152,7 @@ const Reports = () => {
               <TableHead>Actions</TableHead>
             </TableRow>
           </thead>
-          <tbody>
+          <tbody ref={tableContainerRef}>
             {reports.map(report => (
               <ReportItem
                 setItemToUpdate={setItemToUpdate}

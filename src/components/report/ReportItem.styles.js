@@ -20,7 +20,7 @@ export const TableData = styled.td`
   line-height: 1.5;
 
   &:nth-child(1) { width: 100px; }
-  &:nth-child(2) { width: 80px; }
+  &:nth-child(2) { width: 83px; }
   &:nth-child(3) { width: 60px; }
   &:nth-child(4) { width: 120px; }
   &:nth-child(5) { width: 100px; }
