@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext, useRef } from 'react'
 import { UserContext } from '../../contexts/user-context'
 import {
   usersRef,
@@ -39,6 +39,8 @@ const AdminReports = () => {
     new Date().toISOString().split('T')[0]
   )
   const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0])
+
+  const tableContainerRef = useRef(null)
 
   const handleTransferChange = e => {
     setByTransfer(e.target.value)
@@ -144,6 +146,14 @@ const AdminReports = () => {
     return () => unsubscribe()
   }, [user, byTransfer, byAgent, startDate, endDate])
 
+  useEffect(() => {
+    // Scroll to the bottom of the table container whenever rows are updated
+    if (tableContainerRef.current) {
+      const { scrollHeight, clientHeight } = tableContainerRef.current
+      tableContainerRef.current.scrollTop = scrollHeight - clientHeight
+    }
+  }, [reports])
+
   return (
     <MainContainer>
       {/* <button disabled={displayNewItem} onClick={() => setDisplayNewItem(true)}>
@@ -226,7 +236,7 @@ const AdminReports = () => {
               <TableHead>Actions</TableHead>
             </TableRow>
           </thead>
-          <tbody>
+          <tbody ref={tableContainerRef}>
             {reports.map(report => (
               <ReportItem
                 setItemToUpdate={setItemToUpdate}
