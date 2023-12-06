@@ -37,9 +37,11 @@ const AdminReports = () => {
   const [byAgent, setByAgent] = useState('all')
   const [agents, setAgents] = useState([])
   const [startDate, setStartDate] = useState(
-    new Date().toISOString().split('T')[0]
+    new Date().toLocaleDateString('en-CA', { timeZone: 'America/Los_Angeles' })
   )
-  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0])
+  const [endDate, setEndDate] = useState(
+    new Date().toLocaleDateString('en-CA', { timeZone: 'America/Los_Angeles' })
+  )
 
   const tableContainerRef = useRef(null)
 
