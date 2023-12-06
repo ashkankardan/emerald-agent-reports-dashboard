@@ -90,7 +90,7 @@ export const ReportTable = styled.table`
     display: block;
     width: 100%;
     overflow-y: scroll;
-    height: calc(100vh - 275px);
+    height: calc(100vh - 285px);
 
 // Scrollbar track
 &::-webkit-scrollbar {
@@ -124,8 +124,8 @@ export const TableHead = styled.th`
   text-align: left;
   padding: 8px;
 
-  &:nth-child(1) { width: 100px; }
-  &:nth-child(2) { width: 83px; }
+  &:nth-child(1) { width: 83px; }
+  &:nth-child(2) { width: 100px; }
   &:nth-child(3) { width: 60px; }
   &:nth-child(4) { width: 120px; }
   &:nth-child(5) { width: 100px; }
@@ -134,10 +134,10 @@ export const TableHead = styled.th`
 
   &:nth-child(9) { width: 81px; }
   &:nth-child(10) { width: 100px; }
-  &:nth-child(11) { width: 80px; }
+  &:nth-child(11) { width: 100px; }
   &:nth-child(12) { width: 100px; }
   &:nth-child(13) { width: 100px; }
-  &:nth-child(14) { width: 80px; }
+  &:nth-child(14) { width: 100px; }
 
 `
 

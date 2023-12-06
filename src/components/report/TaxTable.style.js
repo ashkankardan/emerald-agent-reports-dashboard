@@ -10,7 +10,7 @@ export const TaxTableHead = styled.th`
   &:nth-child(3) { width: 100px; }
   &:nth-child(4) { width: 90px; }
   &:nth-child(5) { width: 87px; }
-  &:nth-child(7) { width: 81px; }
+  &:nth-child(7) { width: 100px; }
   &:nth-child(8) { width: 100px; }
   &:nth-child(9) { width: 100px; }
   &:nth-child(10) { width: 100px; }
@@ -28,7 +28,7 @@ border: 1px solid purple;
   &:nth-child(3) { width: 100px; }
   &:nth-child(4) { width: 90px; }
   &:nth-child(5) { width: 87px; }
-  &:nth-child(7) { width: 81px; }
+  &:nth-child(7) { width: 100px; }
   &:nth-child(8) { width: 100px; }
   &:nth-child(9) { width: 100px; }
   &:nth-child(10) { width: 100px; }

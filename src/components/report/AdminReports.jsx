@@ -286,8 +286,8 @@ const AdminReports = () => {
         <ReportTable>
           <thead>
             <TableRow>
-              <TableHead>Agent</TableHead>
               <TableHead>Date</TableHead>
+              <TableHead>Agent</TableHead>
               <TableHead>TSFR #</TableHead>
               <TableHead>Phone #</TableHead>
               <TableHead>Name</TableHead>
@@ -295,10 +295,21 @@ const AdminReports = () => {
               <TableHead>Duration</TableHead>
               <TableHead>Notes</TableHead>
               <TableHead>Enrolled</TableHead>
-              <TableHead>Enrolled Amount</TableHead>
-              <TableHead>Not Enough Debt</TableHead>
-              <TableHead>State Liability</TableHead>
-              <TableHead>Federal Liability</TableHead>
+
+              {(byDepartment === 'all' || byDepartment === 'debt') && (
+                <>
+                  <TableHead>Enrolled Amount</TableHead>
+                  <TableHead>Not Enough Debt</TableHead>
+                </>
+              )}
+
+              {(byDepartment === 'all' || byDepartment === 'tax') && (
+                <>
+                  <TableHead>State Liability</TableHead>
+                  <TableHead>Federal Liability</TableHead>
+                </>
+              )}
+
               <TableHead>Actions</TableHead>
             </TableRow>
           </thead>
@@ -307,6 +318,7 @@ const AdminReports = () => {
               <ReportItem
                 setItemToUpdate={setItemToUpdate}
                 setDisplayUpdate={setDisplayUpdate}
+                byDepartment={byDepartment}
                 key={report.id}
                 report={report}
                 agent={getAgentName(report.agentId)}

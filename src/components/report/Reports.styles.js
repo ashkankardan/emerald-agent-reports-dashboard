@@ -66,7 +66,7 @@ export const ReportTable = styled.table`
     display: block;
     width: 100%;
     overflow-y: scroll;
-    max-height: 700px;
+    height: calc(100vh - 285px);
 
 
 // Scrollbar track
@@ -106,9 +106,9 @@ export const TableHead = styled.th`
   &:nth-child(3) { width: 100px; }
   &:nth-child(4) { width: 90px; }
   &:nth-child(5) { width: 87px; }
-  &:nth-child(7) { width: 81px; }
+  &:nth-child(7) { width: 100px; }
 
-  &:nth-last-child(1) { width: 80px; }
+  &:nth-last-child(1) { width: 100px; }
 `
 
 export const TableRow = styled.tr`
