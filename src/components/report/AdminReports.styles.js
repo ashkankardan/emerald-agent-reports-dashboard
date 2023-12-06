@@ -23,6 +23,7 @@ export const SectionNavContainer = styled.div`
 
 export const Btn = styled.div`
   width: 80px;
+  /* height: 30px; */
   height: 30px;
   border: 1px solid gray;
   display: flex;
@@ -42,6 +43,7 @@ export const Btn = styled.div`
 export const InputRow = styled.div`
   width: 100%;
   margin-bottom: 15px;
+  /* height: 30px; */
   height: 30px;
   display: flex;
   align-items: center;
@@ -57,6 +59,7 @@ export const SelectInput = styled.select`
   /* width: 50px; */
   border-radius: 5px;
   outline: none;
+  /* height: 25px; */
   height: 25px;
   padding: 0 5px;
   cursor: pointer;
@@ -87,7 +90,7 @@ export const ReportTable = styled.table`
     display: block;
     width: 100%;
     overflow-y: scroll;
-    max-height: 700px;
+    height: calc(100vh - 275px);
 
 // Scrollbar track
 &::-webkit-scrollbar {
@@ -146,6 +149,7 @@ export const TableRow = styled.tr`
 
 export const Divider = styled.div`
   width: 100%;
+  /* height: 1px; */
   height: 1px;
   background-color: purple;
   margin: 10px auto;
