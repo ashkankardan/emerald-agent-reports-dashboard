@@ -48,3 +48,24 @@ export const Divider = styled.div`
   background-color: purple;
   margin: 10px auto;
 `
+
+export const Btn = styled.div`
+  width: 100%;
+  /* height: 30px; */
+  height: 25px;
+  border: 1px solid gray;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: white;
+  font-size: 14px;
+
+  &:hover {
+    color: gray;
+    border-color: purple;
+  }
+`

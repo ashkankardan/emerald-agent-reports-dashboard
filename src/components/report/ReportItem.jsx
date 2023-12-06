@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { TableData, TableRow } from './ReportItem.styles'
+import { Btn, TableData, TableRow } from './ReportItem.styles'
 import { UserContext } from '../../contexts/user-context'
 import { DebtTableData } from './DebtTable.style'
 import { TaxTableData } from './TaxTable.style'
@@ -26,7 +26,7 @@ const ReportItem = ({
       'N/A'
 
   return (
-    <TableRow >
+    <TableRow>
       {(user.role === 'admin' || user.role === 'super-admin') && (
         <>
           <TableData className={byDepartment}>{createdAtFormatted}</TableData>
@@ -37,18 +37,28 @@ const ReportItem = ({
           <TableData className={byDepartment}>{report.startTime}</TableData>
           <TableData className={byDepartment}>{report.duration}</TableData>
           <TableData className={byDepartment}>{report.notes}</TableData>
-          <TableData className={byDepartment}>{report.enrolled ? 'Yes' : 'No'}</TableData>
+          <TableData className={byDepartment}>
+            {report.enrolled ? 'Yes' : 'No'}
+          </TableData>
 
           {(byDepartment === 'all' || byDepartment === 'debt') && (
             <>
-              <TableData className={byDepartment}>{report.enrolledAmount}</TableData>
-              <TableData className={byDepartment}>{report.notEnoughDebt ? 'NED' : '-'}</TableData>
+              <TableData className={byDepartment}>
+                {report.enrolledAmount}
+              </TableData>
+              <TableData className={byDepartment}>
+                {report.notEnoughDebt ? 'NED' : '-'}
+              </TableData>
             </>
           )}
           {(byDepartment === 'all' || byDepartment === 'tax') && (
             <>
-              <TableData className={byDepartment}>{report.stateLiability}</TableData>
-              <TableData className={byDepartment}>{report.federalLiability}</TableData>
+              <TableData className={byDepartment}>
+                {report.stateLiability}
+              </TableData>
+              <TableData className={byDepartment}>
+                {report.federalLiability}
+              </TableData>
             </>
           )}
         </>
@@ -82,7 +92,7 @@ const ReportItem = ({
       )}
 
       <TableData>
-        <button onClick={handleOpenUpdateModal}>Update</button>
+        <Btn onClick={handleOpenUpdateModal}>Update</Btn>
       </TableData>
     </TableRow>
   )
