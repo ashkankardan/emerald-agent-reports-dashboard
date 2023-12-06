@@ -3,9 +3,15 @@ import { TableData, TableRow } from './ReportItem.styles'
 import { UserContext } from '../../contexts/user-context'
 import { DebtTableData } from './DebtTable.style'
 import { TaxTableData } from './TaxTable.style'
-import { format } from 'date-fns';
+import { format } from 'date-fns'
 
-const ReportItem = ({ report, setItemToUpdate, setDisplayUpdate, agent }) => {
+const ReportItem = ({
+  report,
+  setItemToUpdate,
+  setDisplayUpdate,
+  agent,
+  byDepartment
+}) => {
   const { user } = useContext(UserContext)
 
   const handleOpenUpdateModal = () => {
@@ -16,26 +22,35 @@ const ReportItem = ({ report, setItemToUpdate, setDisplayUpdate, agent }) => {
   // Convert Firestore Timestamp to JavaScript Date and format it
   const createdAtFormatted = report.createdAt
     ? format(report.createdAt.toDate(), 'MM/dd/yy') // For "MM/DD/YYYY" format
-    // ? format(report.createdAt.toDate(), 'MMM dd yyyy') // Uncomment for "MMM DD YYYY" format
-    : 'N/A';
+    : // ? format(report.createdAt.toDate(), 'MMM dd yyyy') // Uncomment for "MMM DD YYYY" format
+      'N/A'
 
   return (
-    <TableRow>
+    <TableRow >
       {(user.role === 'admin' || user.role === 'super-admin') && (
         <>
-          <TableData>{agent}</TableData>
-          <TableData>{createdAtFormatted}</TableData>
-          <TableData>{report.transfer}</TableData>
-          <TableData>{report.phone}</TableData>
-          <TableData>{report.name}</TableData>
-          <TableData>{report.startTime}</TableData>
-          <TableData>{report.duration}</TableData>
-          <TableData>{report.notes}</TableData>
-          <TableData>{report.enrolled ? 'Yes' : 'No'}</TableData>
-          <TableData>{report.enrolledAmount}</TableData>
-          <TableData>{report.notEnoughDebt ? 'NED' : '-'}</TableData>
-          <TableData>{report.stateLiability}</TableData>
-          <TableData>{report.federalLiability}</TableData>
+          <TableData className={byDepartment}>{createdAtFormatted}</TableData>
+          <TableData className={byDepartment}>{agent}</TableData>
+          <TableData className={byDepartment}>{report.transfer}</TableData>
+          <TableData className={byDepartment}>{report.phone}</TableData>
+          <TableData className={byDepartment}>{report.name}</TableData>
+          <TableData className={byDepartment}>{report.startTime}</TableData>
+          <TableData className={byDepartment}>{report.duration}</TableData>
+          <TableData className={byDepartment}>{report.notes}</TableData>
+          <TableData className={byDepartment}>{report.enrolled ? 'Yes' : 'No'}</TableData>
+
+          {(byDepartment === 'all' || byDepartment === 'debt') && (
+            <>
+              <TableData className={byDepartment}>{report.enrolledAmount}</TableData>
+              <TableData className={byDepartment}>{report.notEnoughDebt ? 'NED' : '-'}</TableData>
+            </>
+          )}
+          {(byDepartment === 'all' || byDepartment === 'tax') && (
+            <>
+              <TableData className={byDepartment}>{report.stateLiability}</TableData>
+              <TableData className={byDepartment}>{report.federalLiability}</TableData>
+            </>
+          )}
         </>
       )}
       {user.department === 'debt' && (

@@ -17,6 +17,33 @@ exports.receiveCallDetails = functions.https.onRequest(async (request, response)
 
   let callData = request.query; // or request.body if using POST
 
+  const queues = [
+    'Queue1',
+    'Queue2',
+    'Queue3',
+    'Queue4',
+    'Queue5',
+    'Queue6',
+    'Queue7',
+    'Queue8',
+    'Queue9',
+    'Queue10',
+    'ENGLISHXFER',
+  ]
+
+  if (!callData.group) return;
+  if (!queues.includes(callData.group)) return;
+
+  // ----- update group/queue
+
+  if (callData.group === 'ENGLISHXFER') {
+    callData.group = 11
+  } else {
+    const match = /(\d+)$/.exec(callData.group);
+    match ? callData.group = parseInt(match[1], 10) : callData.group = 0;
+  }
+
+  // -----
   const getCurrentFormattedTime = () => {
     const format = 'hh:mm A'; // 12-hour format with AM/PM
     const timezone = 'America/Los_Angeles';
@@ -50,7 +77,7 @@ exports.receiveCallDetails = functions.https.onRequest(async (request, response)
       "notes": "",
       "phone": callData.phone_number,
       "startTime": getCurrentFormattedTime(),
-      "transfer": 0,
+      "transfer": callData.group,
     }
 
     const docRef = await reportsRef.add(newReportObj);
@@ -74,3 +101,37 @@ exports.receiveCallDetails = functions.https.onRequest(async (request, response)
     response.status(500).send("Error saving call data");
   }
 });
+
+
+
+// -----------------------
+
+// exports.receiveCallDetailsInOut = functions.https.onRequest(async (request, response) => {
+//   // Extracting parameters from the query string
+//   const { lead_id, phone_number, agent_user_id, group } = request.query;
+
+//   // Determine call type based on the presence of a 'group' value
+//   const callType = group ? 'Inbound' : 'Outbound';
+
+//   // Construct call data object
+//   const callData = {
+//     lead_id,
+//     phone_number,
+//     agent_user_id,
+//     group,
+//     callType,
+//     "createdAt": admin.firestore.FieldValue.serverTimestamp(),
+//   };
+
+//   try {
+//     // Save the call data to the 'calls' collection in Firestore
+//     await admin.firestore().collection('calls').add(callData);
+//     console.log('Call data saved to Firestore:', callData);
+
+//     // Respond to VICIdial
+//     response.send("Call data received and saved to Firestore");
+//   } catch (error) {
+//     console.error('Error saving call data to Firestore:', error);
+//     response.status(500).send("Error saving call data");
+//   }
+// });

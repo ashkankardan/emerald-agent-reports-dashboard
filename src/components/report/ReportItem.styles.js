@@ -19,8 +19,8 @@ export const TableData = styled.td`
   padding: 8px;
   line-height: 1.5;
 
-  &:nth-child(1) { width: 100px; }
-  &:nth-child(2) { width: 83px; }
+  &:nth-child(1) { width: 83px; }
+  &:nth-child(2) { width: 100px; }
   &:nth-child(3) { width: 60px; }
   &:nth-child(4) { width: 120px; }
   &:nth-child(5) { width: 100px; }
@@ -29,13 +29,17 @@ export const TableData = styled.td`
 
   &:nth-child(9) { width: 81px; }
   &:nth-child(10) { width: 100px; }
-  &:nth-child(11) { width: 80px; }
+  &:nth-child(11) { width: 100px; }
   &:nth-child(12) { width: 100px; }
   &:nth-child(13) { width: 100px; }
-  &:nth-child(14) { width: 80px; }
+  &:nth-child(14) { width: 100px; }
 
-  &:nth-last-child(1) { width: 80px; }
-
+  &:nth-last-child(1) {
+    width: 100px;
+    button {
+      width: 100%;
+    }
+  }
 `;
 
 export const Divider = styled.div`
