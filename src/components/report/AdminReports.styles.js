@@ -22,20 +22,21 @@ export const SectionNavContainer = styled.div`
 `
 
 export const Btn = styled.div`
-  width: 80px;
-  /* height: 30px; */
-  height: 30px;
+  width: 83px;
+  height: 25px;
   border: 1px solid gray;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 5px;
+  font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-weight: bold;
+  color: white;
+  font-size: 15px;
 
   &:hover {
-    color: purple;
+    color: gray;
     border-color: purple;
   }
 `
@@ -47,6 +48,14 @@ export const InputRow = styled.div`
   height: 30px;
   display: flex;
   align-items: center;
+
+  &.export {
+    justify-content: end;
+
+    div {
+      transform: translateX(-24px);
+    }
+  }
 `
 
 export const Label = styled.label`

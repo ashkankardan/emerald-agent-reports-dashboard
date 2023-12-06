@@ -23,8 +23,11 @@ import {
   TableBody,
   TableHead,
   TableRow,
-  ReportMainContent
+  ReportMainContent,
+  Btn
 } from './AdminReports.styles'
+import * as FileSaver from 'file-saver'
+import * as XLSX from 'xlsx'
 
 const AdminReports = () => {
   const { user } = useContext(UserContext)
@@ -42,6 +45,7 @@ const AdminReports = () => {
   const [endDate, setEndDate] = useState(
     new Date().toLocaleDateString('en-CA', { timeZone: 'America/Los_Angeles' })
   )
+  const [isExporting, setIsExporting] = useState(false)
 
   const tableContainerRef = useRef(null)
 
@@ -98,6 +102,52 @@ const AdminReports = () => {
     } catch (error) {
       console.log('Error getting userIds: ', error)
     }
+  }
+
+  const exportToExcel = () => {
+    setIsExporting(true)
+
+    const fileType =
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
+    const fileExtension = '.xlsx'
+
+    const buildRow = report => {
+      const baseData = {
+        Date: report.createdAt
+          ? report.createdAt.toDate().toLocaleDateString()
+          : 'N/A', // Adjust format as needed
+        Agent: getAgentName(report.agentId),
+        'TSFR #': report.transfer,
+        'Phone #': report.phone,
+        Name: report.name,
+        'Start Time': report.startTime,
+        Duration: report.duration,
+        Notes: report.notes,
+        Enrolled: report.enrolled ? 'Yes' : 'No'
+      }
+
+      if (byDepartment === 'all' || byDepartment === 'debt') {
+        baseData['Enrolled Amount'] = report.enrolledAmount
+        baseData['Not Enough Debt'] = report.notEnoughDebt ? 'NED' : '-'
+      }
+
+      if (byDepartment === 'all' || byDepartment === 'tax') {
+        baseData['State Liability'] = report.stateLiability
+        baseData['Federal Liability'] = report.federalLiability
+      }
+
+      return baseData
+    }
+
+    const dataForExport = reports.map(buildRow)
+
+    const ws = XLSX.utils.json_to_sheet(dataForExport)
+    const wb = { Sheets: { data: ws }, SheetNames: ['data'] }
+    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' })
+    const data = new Blob([excelBuffer], { type: fileType })
+    FileSaver.saveAs(data, 'Reports' + fileExtension)
+
+    setIsExporting(false)
   }
 
   useEffect(() => {
@@ -280,6 +330,12 @@ const AdminReports = () => {
             value={endDate}
             onChange={e => setEndDate(e.target.value)}
           />
+        </InputRow>
+
+        <InputRow className='export'>
+          <Btn disabled={isExporting} onClick={exportToExcel}>
+            Export
+          </Btn>
         </InputRow>
       </SectionNavContainer>
       <ReportMainContent>
