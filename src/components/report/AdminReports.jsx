@@ -37,6 +37,7 @@ const AdminReports = () => {
   const [itemToUpdate, setItemToUpdate] = useState(null)
   const [byTransfer, setByTransfer] = useState('all')
   const [byDepartment, setByDepartment] = useState('all')
+  const [byEnrolled, setByEnrolled] = useState('all')
   const [byAgent, setByAgent] = useState('all')
   const [agents, setAgents] = useState([])
   const [startDate, setStartDate] = useState(
@@ -55,6 +56,16 @@ const AdminReports = () => {
 
   const handleDepartmentChange = e => {
     setByDepartment(e.target.value)
+  }
+
+  const handleEnrolledChange = e => {
+    if (e.target.value === 'yes') {
+      setByEnrolled(true)
+    } else if (e.target.value === 'no') {
+      setByEnrolled(false)
+    } else {
+      setByEnrolled('all')
+    }
   }
 
   const handleAgentChange = e => {
@@ -208,6 +219,10 @@ const AdminReports = () => {
         }
       }
 
+      if (byEnrolled !== 'all') {
+        conditions.push(where('enrolled', '==', byEnrolled))
+      }
+
       if (byAgent !== 'all') {
         conditions.push(where('agentId', '==', byAgent))
       }
@@ -241,7 +256,7 @@ const AdminReports = () => {
     return () => {
       if (unsubscribe) unsubscribe()
     }
-  }, [user, byTransfer, byDepartment, byAgent, startDate, endDate])
+  }, [user, byTransfer, byDepartment, byEnrolled, byAgent, startDate, endDate])
 
   useEffect(() => {
     // Scroll to the bottom of the table container whenever rows are updated
@@ -290,6 +305,25 @@ const AdminReports = () => {
             </option>
             <option key='tax' value='tax'>
               Tax
+            </option>
+          </SelectInput>
+        </InputRow>
+
+        <InputRow>
+          <Label htmlFor='enrolled'>Enrolled:</Label>
+          <SelectInput
+            id='enrolled'
+            name='enrolled'
+            onChange={handleEnrolledChange}
+          >
+            <option key='all' value='all'>
+              All
+            </option>
+            <option key='yes' value='yes'>
+              Yes
+            </option>
+            <option key='no' value='no'>
+              No
             </option>
           </SelectInput>
         </InputRow>
