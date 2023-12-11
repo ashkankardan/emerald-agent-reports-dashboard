@@ -17,7 +17,6 @@ code {
     monospace;
 }
 
-/* Scrollbar */
-/* ::-webkit-scrollbar {
-  width: 0;
-} */
+.access_denied {
+  color: red;
+}
