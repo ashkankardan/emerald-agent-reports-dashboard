@@ -2,6 +2,7 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp();
 const moment = require('moment-timezone');
+const cors = require('cors')({ origin: true });
 
 exports.receiveCallDetails = functions.https.onRequest(async (request, response) => {
 
@@ -101,6 +102,24 @@ exports.receiveCallDetails = functions.https.onRequest(async (request, response)
     response.status(500).send("Error saving call data");
   }
 });
+
+exports.checkIP = functions.https.onRequest((request, response) => {
+  cors(request, response, () => {
+    // IP segment to check against
+    const allowedIPStart = "2600:1700:af8:3340:";
+
+    const requestIP = request.headers['x-forwarded-for'] || request.connection.remoteAddress;
+
+    // Check if the request IP starts with the allowed IP segment
+    if (requestIP.startsWith(allowedIPStart)) {
+      response.send({ status: 'success', message: 'IP address allowed' });
+    } else {
+      response.status(403).send({ status: 'error', message: 'Access denied' });
+    }
+  });
+});
+
+
 
 
 

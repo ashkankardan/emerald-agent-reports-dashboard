@@ -6,20 +6,56 @@ import Admin from './pages/admin/Admin';
 import Home from './pages/home/Home'
 import UserProvider from './contexts/user-context';
 import Login from './pages/login/Login';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 function App() {
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    checkIP();
+  }, []);
+
+  const checkIP = async () => {
+    try {
+      const response = await axios.get(process.env.REACT_APP_CHECK_IP_URL);
+      if (response.data.status === 'success') {
+        setIsAuthorized(true);
+      } else {
+        setIsAuthorized(false);
+      }
+    } catch (error) {
+      console.error('Error checking IP:', error);
+      setIsAuthorized(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <UserProvider>
-      <Layouts>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/agent" element={<Agent />} />
-          <Route path="/admin" element={<Admin />} />
-        </Routes>
-      </Layouts>
-    </UserProvider>
+    <>
+      {isAuthorized ? (
+
+        <UserProvider>
+          <Layouts>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/agent" element={<Agent />} />
+              <Route path="/admin" element={<Admin />} />
+            </Routes>
+          </Layouts>
+        </UserProvider>)
+        : (
+          <div className='access_denied'>Access denied. Your IP is not authorized to use this app.</div>)
+      }
+    </>
   );
 }
 
