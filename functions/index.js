@@ -3,12 +3,22 @@ const admin = require('firebase-admin');
 admin.initializeApp();
 const moment = require('moment-timezone');
 const cors = require('cors')({ origin: true });
+const axios = require('axios');
+
+// Initialize Twilio client
+const twilio = require('twilio');
+const twilioSid = functions.config().twilio.sid;
+const twilioToken = functions.config().twilio.token;
+const twilioClient = twilio(twilioSid, twilioToken);
 
 exports.receiveCallDetails = functions.https.onRequest(async (request, response) => {
 
   const ipAddress = request.headers['x-forwarded-for'] || request.connection.remoteAddress;
 
+
   const allowedOrigin = '2001:19f0:ac01:1cd4::';
+  // new 2001:19f0:6001:4eed::
+  // old 2001:19f0:ac01:1cd4::
 
   // Check if the Origin header matches the allowed origin
   if (ipAddress !== allowedOrigin) {
@@ -56,7 +66,6 @@ exports.receiveCallDetails = functions.https.onRequest(async (request, response)
     const snapshot = await usersRef.where('viciUsername', '==', callData.agent_user_id).get();
 
     if (snapshot.empty) {
-      console.log('No matching documents.');
       response.status(404).send('No user found with the given viciUsername.');
       return;
     }
@@ -85,20 +94,27 @@ exports.receiveCallDetails = functions.https.onRequest(async (request, response)
     await reportsRef.doc(docRef.id).update({
       id: docRef.id
     });
+    // ----------------------
 
 
-    // // Add a timestamp field to the call data
+
+    // Add a timestamp field to the call data
     // callData.timestamp = admin.firestore.FieldValue.serverTimestamp();
     // callData.ipAddress = ipAddress
 
-    // Save the call data with timestamp to the 'calls' collection in Firestore
+    // // Save the call data with timestamp to the 'calls' collection in Firestore
     // await admin.firestore().collection('calls').add(callData);
     // console.log('Call data with timestamp saved to Firestore:', callData);
+
+
+
+
+
+    // ----------------------
 
     // Respond to VICIdial
     response.send("Call data received and saved with timestamp to Firestore");
   } catch (error) {
-    console.error('Error saving call data with timestamp to Firestore:', error);
     response.status(500).send("Error saving call data");
   }
 });
@@ -119,38 +135,126 @@ exports.checkIP = functions.https.onRequest((request, response) => {
   });
 });
 
+exports.deleteExpiredDocs = functions.pubsub.schedule('every 3 minutes').onRun((context) => {
+  const now = Date.now();
+  const tempURLsRef = admin.firestore().collection('tempURLs');
+
+  return tempURLsRef.where('expiration', '<', now).get()
+    .then(snapshot => {
+      // Create a batch to delete all expired documents
+      const batch = admin.firestore().batch();
+      snapshot.forEach(doc => {
+        batch.delete(doc.ref);
+      });
+      return batch.commit();
+    })
+    .catch(error => {
+      console.error("Error deleting expired documents: ", error);
+    });
+});
+
+exports.checkPinAndFetchDocument = functions.https.onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).send('Method Not Allowed');
+    }
+
+    const { pin, id } = req.body.data; // Change this line
+
+    const docRef = admin.firestore().doc(`tempURLs/${id}`);
 
 
+    try {
+      const doc = await docRef.get();
 
+      if (!doc.exists) {
+        return res.status(404).send('Not Authorized: No such document');
+      }
 
-// -----------------------
+      const data = doc.data();
+      const submittedPin = Number(pin);
 
-// exports.receiveCallDetailsInOut = functions.https.onRequest(async (request, response) => {
-//   // Extracting parameters from the query string
-//   const { lead_id, phone_number, agent_user_id, group } = request.query;
+      if (data.accessPinCode === submittedPin) {
+        return res.status(200).send({ data: doc.data() });
+      } else {
+        await docRef.delete();
+        return res.status(401).send('Not Authorized: Invalid PIN');
+      }
+    } catch (error) {
+      return res.status(500).send('Internal Server Error');
+    }
+  });
+});
 
-//   // Determine call type based on the presence of a 'group' value
-//   const callType = group ? 'Inbound' : 'Outbound';
+exports.updateAndDeleteDocTempURL = functions.https.onCall(async (data, context) => {
+  const { reportId, tempDocId, updatedReport } = data;
 
-//   // Construct call data object
-//   const callData = {
-//     lead_id,
-//     phone_number,
-//     agent_user_id,
-//     group,
-//     callType,
-//     "createdAt": admin.firestore.FieldValue.serverTimestamp(),
-//   };
+  if (!reportId || !tempDocId || !updatedReport) {
+    throw new functions.https.HttpsError('invalid-argument', 'Missing parameters');
+  }
 
-//   try {
-//     // Save the call data to the 'calls' collection in Firestore
-//     await admin.firestore().collection('calls').add(callData);
-//     console.log('Call data saved to Firestore:', callData);
+  const db = admin.firestore();
+  const docRef = db.collection('reports').doc(reportId);
+  const tempDocRef = db.collection('tempURLs').doc(tempDocId);
 
-//     // Respond to VICIdial
-//     response.send("Call data received and saved to Firestore");
-//   } catch (error) {
-//     console.error('Error saving call data to Firestore:', error);
-//     response.status(500).send("Error saving call data");
-//   }
-// });
+  try {
+    await docRef.update(updatedReport);
+    await tempDocRef.delete();
+    return { result: "Update and Delete Successful" };
+  } catch (error) {
+    throw new functions.https.HttpsError('unknown', 'Error updating report', error);
+  }
+});
+
+exports.generateTempURL = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Request had invalid credentials.');
+  }
+
+  // Validate input data
+  const { reportId, agentId, toType, toPhone, toEmail } = data;
+  if (!reportId || !agentId) {
+    throw new functions.https.HttpsError('invalid-argument', 'Missing required fields.');
+  }
+
+  const db = admin.firestore();
+  const uid = db.collection('tempURLs').doc().id;
+  const expiration = Date.now() + (3 * 60 * 1000); // 3 minutes from now
+  const accessPinCode = Math.floor(10000 + Math.random() * 90000);
+
+  const tempURLDoc = db.collection('tempURLs').doc(uid);
+  const reportDoc = db.collection('reports').doc(reportId);
+
+  // Transaction to update Firestore
+  await db.runTransaction(async transaction => {
+    const reportDocSnapshot = await transaction.get(reportDoc);
+    if (!reportDocSnapshot.exists) {
+      throw new functions.https.HttpsError('not-found', 'Report document does not exist');
+    }
+
+    transaction.update(reportDoc, { accessPinCode: accessPinCode });
+    transaction.set(tempURLDoc, {
+      expiration: expiration,
+      id: uid,
+      accessPinCode,
+      reportId,
+      agentId,
+      "createdAt": admin.firestore.FieldValue.serverTimestamp(),
+    });
+  });
+
+  // Send SMS or Email after Firestore transaction
+  if (toType === 'phone' && toPhone) {
+    try {
+      const message = await twilioClient.messages.create({
+        body: `Verification link: encryptdatatransfer.com/secured/${uid}`,
+        from: '+18556702281', // Your Twilio phone number
+        to: toPhone
+      });
+    } catch (error) {
+      throw new functions.https.HttpsError('unknown', 'Failed to send SMS', error);
+    }
+  }
+
+  return { accessPinCode, uid };
+});

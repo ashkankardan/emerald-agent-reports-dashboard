@@ -1,19 +1,19 @@
 {
-  "short_name": "Agent Report Dashboard - Emerald Gain Financial Group",
-  "name": "Emerald Gain Financial Group - Agent Report Dashboard",
+  "short_name": "Encrypt Data Transfer",
+  "name": "Encrypt Data Transfer",
   "icons": [
     {
-      "src": "EmeraldGain-FinancialGroup-favicon.png",
+      "src": "EncryptDataTransfer-favicon.png",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
     {
-      "src": "EmeraldGain-FinancialGroup-favicon.png",
+      "src": "EncryptDataTransfer-favicon.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "EmeraldGain-FinancialGroup-favicon.png",
+      "src": "EncryptDataTransfer-favicon.png",
       "type": "image/png",
       "sizes": "512x512"
     }

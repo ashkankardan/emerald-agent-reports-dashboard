@@ -16,12 +16,13 @@ align-items: center;
 
 export const ModalContent = styled.div`
 width: 655px;
-height: 400px;
+height: 460px;
 background-color: #555;
 border-radius: 5px;
 padding: 10px;
 box-sizing: border-box;
-top: 30%;
+top: 50%;
+transform: translateY(-50%);
 position: absolute;
 `
 
@@ -76,6 +77,42 @@ outline: none;
 height: 25px;
 padding: 0 5px;
 `
+
+export const SentUrlBtn = styled.div`
+display: inline-flex;
+width: 75px;
+height: 20px;
+margin-left: 4px;
+background-color: purple;
+justify-content: center;
+align-items: center;
+border-radius: 5px;
+padding-bottom: 3px;
+outline: none;
+font-weight: bold;
+font-size: 14px;
+border: 1px solid black;
+transform: translateY(-.5px);
+cursor: pointer;
+transition: all 0.3s;
+
+&:hover{
+  background-color: gray;
+  color: black;
+}
+
+&:active{
+  background-color: darkgray;
+}
+
+`
+
+export const PinText = styled.div`
+display: inline;
+color: black;
+font-weight: bold;
+`
+
 
 export const TextArea = styled.textarea`
 width: 100%;
