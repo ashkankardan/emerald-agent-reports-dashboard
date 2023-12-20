@@ -3,11 +3,13 @@ import Layouts from "./layouts/layouts";
 import Signup from './pages/Signup/Signup';
 import Agent from './pages/agent/Agent';
 import Admin from './pages/admin/Admin';
-import Home from './pages/home/Home'
+import Home from './pages/home/Home';
+import DynamicForm from './pages/dynamic/DynamicForm'
 import UserProvider from './contexts/user-context';
 import Login from './pages/login/Login';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import LogoMotion from './components/logo-motion/LogoMotion';
 
 function App() {
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -39,22 +41,31 @@ function App() {
 
   return (
     <>
-      {isAuthorized ? (
+      <UserProvider>
+        <Layouts>
+          <Routes>
+            {/* Public Route */}
+            <Route path="/secured/:id" element={<DynamicForm />} />
 
-        <UserProvider>
-          <Layouts>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/agent" element={<Agent />} />
-              <Route path="/admin" element={<Admin />} />
-            </Routes>
-          </Layouts>
-        </UserProvider>)
-        : (
-          <div className='access_denied'>Access denied. Your IP is not authorized to use this app.</div>)
-      }
+            <Route path="*" element={
+              <LogoMotion />
+            } />
+
+            {/* Protected Routes */}
+            {isAuthorized ? (
+              <>
+                <Route path="/" element={<Home />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/agent" element={<Agent />} />
+                <Route path="/admin" element={<Admin />} />
+              </>
+            ) : (
+              <Route path="*" element={<LogoMotion />} />
+            )}
+          </Routes>
+        </Layouts>
+      </UserProvider>
     </>
   );
 }
