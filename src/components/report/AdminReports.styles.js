@@ -16,9 +16,38 @@ width: 100%;
 
 export const SectionNavContainer = styled.div`
   width: 100%;
+`
+
+export const SectionNavRow = styled.div`
+  width: 100%;
   display: flex;
   justify-content: right;
   margin-bottom: 15px;
+`
+
+export const SearchIconContainer = styled.div`
+  width: 25px;
+  height: 25px;
+  margin: 0 10px;
+  border: 1px solid gray;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: white;
+  font-size: 15px;
+
+  &:hover {
+    color: gray;
+    border-color: purple;
+  }
+
+  &.translate {
+    transform: translateX(-10px);
+  }
 `
 
 export const Btn = styled.div`
@@ -65,13 +94,27 @@ export const Label = styled.label`
 `
 
 export const SelectInput = styled.select`
-  /* width: 50px; */
   border-radius: 5px;
   outline: none;
-  /* height: 25px; */
   height: 25px;
   padding: 0 5px;
   cursor: pointer;
+`
+
+export const Input = styled.input`
+  width: 130px;
+  height: 25px;
+  border-radius: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  outline: none;
+  border: none;
+
+  &.searchInput {
+    width: 150px;
+    padding-right: 18px;
+    box-sizing: border-box;
+  }
 `
 
 export const ReportTable = styled.table`
@@ -99,7 +142,7 @@ export const ReportTable = styled.table`
     display: block;
     width: 100%;
     overflow-y: scroll;
-    height: calc(100vh - 285px);
+    height: calc(100vh - 350px);
 
 // Scrollbar track
 &::-webkit-scrollbar {
@@ -162,4 +205,21 @@ export const Divider = styled.div`
   height: 1px;
   background-color: purple;
   margin: 10px auto;
+`
+
+export const CloseIcon = styled.div`
+  color: red;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translateX(-15px);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+`
+
+export const LoaderContainer = styled.div`
+padding-top: 20px;
+width: 100%;
+text-align: center;
 `
