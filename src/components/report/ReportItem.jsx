@@ -40,7 +40,7 @@ const ReportItem = ({
   }, [report]);
 
   return (
-    <TableRow>
+    <TableRow className={report.lead && 'lead'}>
       {(user.role === "admin" || user.role === "super-admin") && (
         <>
           <TableData className={byDepartment}>{createdAtFormatted}</TableData>
