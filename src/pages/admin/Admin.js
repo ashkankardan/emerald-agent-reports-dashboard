@@ -1,13 +1,16 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { MainContainer } from './Admin.styles';
 import BackBTN from '../../components/back-btn/BackBTN';
 import { usersRef, getDocs, signOut, auth } from '../../config';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/user-context';
 import AdminReports from '../../components/report/AdminReports.jsx';
+import SuperAdmin from '../../components/super-admin/SuperAdmin';
 
 
 const Admin = () => {
+  const [adminView, setAdminView] = useState('admin')
+
   const { user, setUser } = useContext(UserContext)
 
   const navigate = useNavigate();
@@ -44,7 +47,8 @@ const Admin = () => {
 
   return (
     <MainContainer>
-      <AdminReports />
+      {adminView === 'admin' && <AdminReports />}
+      {adminView === 'superAdmin' && <SuperAdmin />}
       {/* <BackBTN /> */}
     </MainContainer>
   );

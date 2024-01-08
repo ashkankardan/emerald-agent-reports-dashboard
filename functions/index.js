@@ -1,5 +1,8 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const firestore = require('@google-cloud/firestore');
+const firestoreClient = new firestore.v1.FirestoreAdminClient();
+
 admin.initializeApp();
 const moment = require('moment-timezone');
 const cors = require('cors')({ origin: true });
@@ -10,6 +13,8 @@ const twilio = require('twilio');
 const twilioSid = functions.config().twilio.sid;
 const twilioToken = functions.config().twilio.token;
 const twilioClient = twilio(twilioSid, twilioToken);
+
+const bucket = 'gs://eg-agent-reports';
 
 exports.receiveCallDetails = functions.https.onRequest(async (request, response) => {
 
@@ -257,4 +262,99 @@ exports.generateTempURL = functions.https.onCall(async (data, context) => {
   }
 
   return { accessPinCode, uid };
+});
+
+exports.searchByName = functions.https.onCall((data, context) => {
+  // Check if the search term is provided
+  if (!data.name) {
+    throw new functions.https.HttpsError('invalid-argument', 'The function must be called with one argument "name".');
+  }
+
+  const searchTerm = data.name.toLowerCase();
+  const reportsRef = admin.firestore().collection('reports');
+
+  return reportsRef.get().then(querySnapshot => {
+    const matches = [];
+
+    querySnapshot.forEach(doc => {
+      const name = doc.data().name.toLowerCase();
+      if (name.includes(searchTerm)) {
+        matches.push({ id: doc.id, ...doc.data() });
+      }
+    });
+
+    return matches;
+  }).catch(error => {
+    throw new functions.https.HttpsError('unknown', 'An error occurred while searching', error);
+  });
+});
+
+exports.scheduledFirestoreExport = functions.pubsub
+  .schedule('every 24 hours')
+  .onRun((context) => {
+
+    const projectId = functions.config().project.id;
+    if (!projectId) {
+      console.error('No Project ID found');
+      throw new Error('Project ID is undefined');
+    }
+
+    const databaseName = firestoreClient.databasePath(projectId, '(default)');
+
+    // Ensure the bucket is defined
+    if (!bucket) {
+      console.error('No Bucket defined');
+      throw new Error('Bucket is undefined');
+    }
+
+    return firestoreClient.exportDocuments({
+      name: databaseName,
+      outputUriPrefix: bucket,
+      collectionIds: []
+    })
+      .then(responses => {
+        const response = responses[0];
+        console.log(`Operation Name: ${response['name']}`);
+        return
+      })
+      .catch(err => {
+        console.error(err);
+        throw new Error('Export operation failed');
+      });
+  });
+
+exports.addPhoneSuffixToReports = functions.https.onRequest(async (req, res) => {
+  const reportsRef = admin.firestore().collection('reports');
+  let batch = admin.firestore().batch();
+  let counter = 0;
+
+  try {
+    const snapshot = await reportsRef.get();
+
+    snapshot.forEach(doc => {
+      if (counter >= 400) {
+        // Commit the current batch and start a new one
+        batch.commit();
+        batch = admin.firestore().batch();
+        counter = 0;
+      }
+
+      let phone = doc.data().phone;
+      if (phone) {
+        phone = phone.trim(); // Trim spaces from the phone number
+        const phoneSuffix = phone.slice(-4);
+        batch.update(doc.ref, { phoneSuffix });
+        counter++;
+      }
+    });
+
+    if (counter > 0) {
+      await batch.commit(); // Commit the last batch
+    }
+
+    res.status(200).send('Updated phoneSuffix in reports successfully');
+  } catch (error) {
+    console.error('Error updating documents:', error);
+    res.status(500).send('Error updating documents');
+  }
 });

@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext, useRef } from 'react'
-import { UserContext } from '../../contexts/user-context'
+import React, { useState, useEffect, useContext, useRef } from "react";
+import { UserContext } from "../../contexts/user-context";
 import {
   usersRef,
   reportsRef,
@@ -7,264 +7,303 @@ import {
   query,
   where,
   onSnapshot,
-  Timestamp
-} from '../../config'
-import NewItem from './NewItem'
-import ReportItem from './ReportItem'
-import UpdateModal from '../modals/update/UpdateModal'
+  Timestamp,
+  functions,
+  httpsCallable,
+} from "../../config";
+import ReportItem from "./ReportItem";
+import UpdateModal from "../modals/update/UpdateModal";
 import {
-  Divider,
   InputRow,
   Label,
   MainContainer,
   ReportTable,
   SectionNavContainer,
   SelectInput,
-  TableBody,
   TableHead,
   TableRow,
   ReportMainContent,
-  Btn
-} from './AdminReports.styles'
-import * as FileSaver from 'file-saver'
-import * as XLSX from 'xlsx'
+  Btn,
+  SectionNavRow,
+  Input,
+  SearchIconContainer,
+  CloseIcon,
+  LoaderContainer,
+} from "./AdminReports.styles";
+import * as FileSaver from "file-saver";
+import * as XLSX from "xlsx";
+import { FaSearch } from "react-icons/fa";
+import LogoMotion from "../logo-motion/LogoMotion";
+import algoliasearch from "algoliasearch";
 
 const AdminReports = () => {
-  const { user } = useContext(UserContext)
-  const [reports, setReports] = useState([])
-  const [displayNewItem, setDisplayNewItem] = useState(false)
-  const [displayUpdateItem, setDisplayUpdate] = useState(false)
-  const [itemToUpdate, setItemToUpdate] = useState(null)
-  const [byTransfer, setByTransfer] = useState('all')
-  const [byDepartment, setByDepartment] = useState('all')
-  const [byEnrolled, setByEnrolled] = useState('all')
-  const [byAgent, setByAgent] = useState('all')
-  const [agents, setAgents] = useState([])
+  const { user } = useContext(UserContext);
+  const [reports, setReports] = useState([]);
+  const [searchedReports, setSearchedReports] = useState([]);
+  const [displayUpdateItem, setDisplayUpdate] = useState(false);
+  const [itemToUpdate, setItemToUpdate] = useState(null);
+  const [byTransfer, setByTransfer] = useState("all");
+  const [byDepartment, setByDepartment] = useState("all");
+  const [byEnrolled, setByEnrolled] = useState("all");
+  const [byAgent, setByAgent] = useState("all");
+  const [agents, setAgents] = useState([]);
   const [startDate, setStartDate] = useState(
-    new Date().toLocaleDateString('en-CA', { timeZone: 'America/Los_Angeles' })
-  )
+    new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" })
+  );
   const [endDate, setEndDate] = useState(
-    new Date().toLocaleDateString('en-CA', { timeZone: 'America/Los_Angeles' })
-  )
-  const [isExporting, setIsExporting] = useState(false)
+    new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" })
+  );
+  const [isLoading, setIsLoading] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const tableContainerRef = useRef(null)
+  const algoliaAppId = process.env.REACT_APP_ALGOLIA_APP_ID;
+  const algoliaApiKey = process.env.REACT_APP_ALGOLIA_API_KEY;
+  const algoliaIndex = process.env.REACT_APP_ALGOLIA_INDEX;
+  const searchClient = algoliasearch(algoliaAppId, algoliaApiKey);
+  const searchIndex = searchClient.initIndex(algoliaIndex);
 
-  const handleTransferChange = e => {
-    setByTransfer(e.target.value)
-  }
+  const tableContainerRef = useRef(null);
 
-  const handleDepartmentChange = e => {
-    setByDepartment(e.target.value)
-  }
+  const handleTransferChange = (e) => {
+    setByTransfer(e.target.value);
+  };
 
-  const handleEnrolledChange = e => {
-    if (e.target.value === 'yes') {
-      setByEnrolled(true)
-    } else if (e.target.value === 'no') {
-      setByEnrolled(false)
+  const handleDepartmentChange = (e) => {
+    setByDepartment(e.target.value);
+  };
+
+  const handleEnrolledChange = (e) => {
+    if (e.target.value === "yes") {
+      setByEnrolled(true);
+    } else if (e.target.value === "no") {
+      setByEnrolled(false);
     } else {
-      setByEnrolled('all')
+      setByEnrolled("all");
     }
-  }
+  };
 
-  const handleAgentChange = e => {
-    setByAgent(e.target.value)
-  }
+  const handleAgentChange = (e) => {
+    setByAgent(e.target.value);
+  };
 
-  const handleStartDateChange = e => {
-    setStartDate(e.target.value)
-    setEndDate(e.target.value)
-  }
+  const handleStartDateChange = (e) => {
+    setStartDate(e.target.value);
+    setEndDate(e.target.value);
+  };
 
   const fetchAllUsers = async () => {
     try {
       // Fetch all documents from the collection
-      const querySnapshot = await getDocs(usersRef)
-      const tempAgents = []
-      querySnapshot.forEach(doc => {
-        tempAgents.push({ ...doc.data(), id: doc.id })
-      })
+      const querySnapshot = await getDocs(usersRef);
+      const tempAgents = [];
+      querySnapshot.forEach((doc) => {
+        tempAgents.push({ ...doc.data(), id: doc.id });
+      });
 
-      setAgents(tempAgents)
+      setAgents(tempAgents);
     } catch (error) {
-      console.error('Error fetching user documents: ', error)
+      console.error("Error fetching user documents: ", error);
     }
-  }
+  };
 
-  const getAgentName = agentReportId => {
-    const agentObj = agents.filter(agent => agent.id === agentReportId)[0]
-    const firstName = agentObj.fname
-    const lastName = agentObj.lname
+  const getAgentName = (agentReportId) => {
+    const agentObj = agents.filter((agent) => agent.id === agentReportId)[0];
+    const firstName = agentObj.fname;
+    const lastName = agentObj.lname;
 
-    return `${firstName} ${lastName}`
-  }
+    return `${firstName} ${lastName}`;
+  };
 
   const getDepartmentUserIds = async () => {
     try {
       const usersQuery = query(
         usersRef,
-        where('department', '==', byDepartment)
-      )
-      const userSnapshot = await getDocs(usersQuery)
-      const userIds = userSnapshot.docs.map(doc => doc.id)
+        where("department", "==", byDepartment)
+      );
+      const userSnapshot = await getDocs(usersQuery);
+      const userIds = userSnapshot.docs.map((doc) => doc.id);
 
-      return userIds
+      return userIds;
     } catch (error) {
-      console.log('Error getting userIds: ', error)
+      console.error("Error getting userIds: ", error);
     }
-  }
+  };
 
   const exportToExcel = () => {
-    setIsExporting(true)
+    setIsExporting(true);
 
     const fileType =
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
-    const fileExtension = '.xlsx'
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+    const fileExtension = ".xlsx";
 
-    const buildRow = report => {
+    const buildRow = (report) => {
       const baseData = {
         Date: report.createdAt
           ? report.createdAt.toDate().toLocaleDateString()
-          : 'N/A', // Adjust format as needed
+          : "N/A", // Adjust format as needed
         Agent: getAgentName(report.agentId),
-        'TSFR #': report.transfer,
-        'Phone #': report.phone,
+        "TSFR #": report.transfer,
+        "Phone #": report.phone,
         Name: report.name,
-        'Start Time': report.startTime,
+        "Start Time": report.startTime,
         Duration: report.duration,
         Notes: report.notes,
-        Enrolled: report.enrolled ? 'Yes' : 'No'
+        Enrolled: report.enrolled ? "Yes" : "No",
+      };
+
+      if (byDepartment === "all" || byDepartment === "debt") {
+        baseData["Enrolled Amount"] = report.enrolledAmount;
+        baseData["Not Enough Debt"] = report.notEnoughDebt ? "NED" : "-";
       }
 
-      if (byDepartment === 'all' || byDepartment === 'debt') {
-        baseData['Enrolled Amount'] = report.enrolledAmount
-        baseData['Not Enough Debt'] = report.notEnoughDebt ? 'NED' : '-'
+      if (byDepartment === "all" || byDepartment === "tax") {
+        baseData["State Liability"] = report.stateLiability;
+        baseData["Federal Liability"] = report.federalLiability;
       }
 
-      if (byDepartment === 'all' || byDepartment === 'tax') {
-        baseData['State Liability'] = report.stateLiability
-        baseData['Federal Liability'] = report.federalLiability
-      }
+      return baseData;
+    };
 
-      return baseData
-    }
+    const dataForExport = reports.map(buildRow);
 
-    const dataForExport = reports.map(buildRow)
+    const ws = XLSX.utils.json_to_sheet(dataForExport);
+    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const data = new Blob([excelBuffer], { type: fileType });
+    FileSaver.saveAs(data, "Reports" + fileExtension);
 
-    const ws = XLSX.utils.json_to_sheet(dataForExport)
-    const wb = { Sheets: { data: ws }, SheetNames: ['data'] }
-    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' })
-    const data = new Blob([excelBuffer], { type: fileType })
-    FileSaver.saveAs(data, 'Reports' + fileExtension)
+    setIsExporting(false);
+  };
 
-    setIsExporting(false)
-  }
+  const handleSearch = async () => {
+    if (!searchTerm || isLoading) return;
+
+    setSearchedReports([]);
+    setIsLoading(true);
+
+    searchIndex
+      .search(searchTerm)
+      .then((response) => {
+        setSearchedReports(response.hits)
+        console.log(response);
+      })
+      .catch((error) => {
+        console.error("Error during Algolia search:", error);
+      });
+
+    setIsLoading(false);
+  };
+
+  const handleClearSearchTerm = () => {
+    setSearchedReports([]);
+    setSearchTerm("");
+  };
 
   useEffect(() => {
-    if (!user) return
+    if (!user) return;
 
-    fetchAllUsers()
-  }, [user])
+    fetchAllUsers();
+  }, [user]);
 
   useEffect(() => {
-    if (!user) return
+    if (!user) return;
 
-    let unsubscribe
+    let unsubscribe;
 
     const fetchData = async () => {
       // Define the offset for UTC-8 in minutes
-      const offset = 1440 // Offset for UTC-8
+      const offset = 1440; // Offset for UTC-8
 
       // Function to adjust date with the UTC-8 offset
-      const adjustDateWithOffset = date => {
-        const adjustedDate = new Date(date)
-        adjustedDate.setMinutes(adjustedDate.getMinutes() + offset)
-        return adjustedDate
-      }
+      const adjustDateWithOffset = (date) => {
+        const adjustedDate = new Date(date);
+        adjustedDate.setMinutes(adjustedDate.getMinutes() + offset);
+        return adjustedDate;
+      };
 
       // Use today's date if start or end date is not selected
-      let selectedStartDate = startDate ? new Date(startDate) : new Date()
-      let selectedEndDate = endDate ? new Date(endDate) : new Date()
+      let selectedStartDate = startDate ? new Date(startDate) : new Date();
+      let selectedEndDate = endDate ? new Date(endDate) : new Date();
 
-      selectedStartDate = adjustDateWithOffset(selectedStartDate)
-      selectedEndDate = adjustDateWithOffset(selectedEndDate)
+      selectedStartDate = adjustDateWithOffset(selectedStartDate);
+      selectedEndDate = adjustDateWithOffset(selectedEndDate);
 
-      const startOfDate = new Date(selectedStartDate.setHours(0, 0, 0, 0))
-      const endOfDate = new Date(selectedEndDate.setHours(23, 59, 59, 999))
+      const startOfDate = new Date(selectedStartDate.setHours(0, 0, 0, 0));
+      const endOfDate = new Date(selectedEndDate.setHours(23, 59, 59, 999));
 
       // Convert to Firestore Timestamps
-      const startTimestamp = Timestamp.fromDate(startOfDate)
-      const endTimestamp = Timestamp.fromDate(endOfDate)
+      const startTimestamp = Timestamp.fromDate(startOfDate);
+      const endTimestamp = Timestamp.fromDate(endOfDate);
 
       let conditions = [
-        where('createdAt', '>=', startTimestamp),
-        where('createdAt', '<=', endTimestamp)
-      ]
+        where("createdAt", ">=", startTimestamp),
+        where("createdAt", "<=", endTimestamp),
+      ];
 
-      if (byTransfer !== 'all') {
-        conditions.push(where('transfer', '==', Number(byTransfer)))
+      if (byTransfer !== "all") {
+        conditions.push(where("transfer", "==", Number(byTransfer)));
       }
 
-      if (byDepartment !== 'all') {
+      if (byDepartment !== "all") {
         try {
           // Await the result of getDepartmentUserIds
-          const departmentUserIds = await getDepartmentUserIds()
+          const departmentUserIds = await getDepartmentUserIds();
 
           if (departmentUserIds && departmentUserIds.length > 0) {
-            conditions.push(where('agentId', 'in', departmentUserIds))
+            conditions.push(where("agentId", "in", departmentUserIds));
           }
         } catch (error) {
-          console.error('Error getting department user IDs:', error)
+          console.error("Error getting department user IDs:", error);
         }
       }
 
-      if (byEnrolled !== 'all') {
-        conditions.push(where('enrolled', '==', byEnrolled))
+      if (byEnrolled !== "all") {
+        conditions.push(where("enrolled", "==", byEnrolled));
       }
 
-      if (byAgent !== 'all') {
-        conditions.push(where('agentId', '==', byAgent))
+      if (byAgent !== "all") {
+        conditions.push(where("agentId", "==", byAgent));
       }
 
       // Create a compound query
-      const reportsQuery = query(reportsRef, ...conditions)
+      const reportsQuery = query(reportsRef, ...conditions);
 
       // Real-time subscription
       unsubscribe = onSnapshot(
         reportsQuery,
-        snapshot => {
-          let tempReports = []
-          snapshot.forEach(doc => {
-            tempReports.push({ ...doc.data(), id: doc.id })
-          })
-          setReports(tempReports)
+        (snapshot) => {
+          let tempReports = [];
+          snapshot.forEach((doc) => {
+            tempReports.push({ ...doc.data(), id: doc.id });
+          });
+          setReports(tempReports);
         },
-        err => {
-          console.error('Error fetching reports: ', err.message)
+        (err) => {
+          console.error("Error fetching reports: ", err.message);
         }
-      )
+      );
 
       // Cleanup subscription on unmount
-      return unsubscribe
-    }
+      return unsubscribe;
+    };
 
     // Call the async function
-    fetchData()
+    fetchData();
 
     // Cleanup function
     return () => {
-      if (unsubscribe) unsubscribe()
-    }
-  }, [user, byTransfer, byDepartment, byEnrolled, byAgent, startDate, endDate])
+      if (unsubscribe) unsubscribe();
+    };
+  }, [user, byTransfer, byDepartment, byEnrolled, byAgent, startDate, endDate]);
 
   useEffect(() => {
     // Scroll to the bottom of the table container whenever rows are updated
     if (tableContainerRef.current) {
-      const { scrollHeight, clientHeight } = tableContainerRef.current
-      tableContainerRef.current.scrollTop = scrollHeight - clientHeight
+      const { scrollHeight, clientHeight } = tableContainerRef.current;
+      tableContainerRef.current.scrollTop = scrollHeight - clientHeight;
     }
-  }, [reports])
+  }, [reports]);
 
   return (
     <MainContainer>
@@ -272,105 +311,128 @@ const AdminReports = () => {
         New
       </button> */}
       <SectionNavContainer>
-        <InputRow>
-          <Label htmlFor='transfer'>Transfer:</Label>
-          <SelectInput
-            id='transfer'
-            name='transfer'
-            onChange={handleTransferChange}
-          >
-            <option key='all' value='all'>
-              All
-            </option>
-            {[...Array(12)].map((_, index) => (
-              <option key={index} value={index + 1}>
-                {index + 1}
+        <SectionNavRow>
+          <InputRow>
+            <Label htmlFor="transfer">Transfer:</Label>
+            <SelectInput
+              id="transfer"
+              name="transfer"
+              onChange={handleTransferChange}
+            >
+              <option key="all" value="all">
+                All
               </option>
-            ))}
-          </SelectInput>
-        </InputRow>
+              {[...Array(12)].map((_, index) => (
+                <option key={index} value={index + 1}>
+                  {index + 1}
+                </option>
+              ))}
+            </SelectInput>
+          </InputRow>
 
-        <InputRow>
-          <Label htmlFor='department'>Department:</Label>
-          <SelectInput
-            id='department'
-            name='department'
-            onChange={handleDepartmentChange}
-          >
-            <option key='all' value='all'>
-              All
-            </option>
-            <option key='debt' value='debt'>
-              Debt
-            </option>
-            <option key='tax' value='tax'>
-              Tax
-            </option>
-          </SelectInput>
-        </InputRow>
-
-        <InputRow>
-          <Label htmlFor='enrolled'>Enrolled:</Label>
-          <SelectInput
-            id='enrolled'
-            name='enrolled'
-            onChange={handleEnrolledChange}
-          >
-            <option key='all' value='all'>
-              All
-            </option>
-            <option key='yes' value='yes'>
-              Yes
-            </option>
-            <option key='no' value='no'>
-              No
-            </option>
-          </SelectInput>
-        </InputRow>
-
-        <InputRow>
-          <Label htmlFor='agentName'>Agent:</Label>
-          <SelectInput
-            id='agentName'
-            name='agentName'
-            onChange={handleAgentChange}
-          >
-            <option key='all' value='all'>
-              All
-            </option>
-            {agents.map(agent => (
-              <option key={agent.id} value={agent.id}>
-                {`${agent.fname} ${agent.lname}`}
+          <InputRow>
+            <Label htmlFor="department">Department:</Label>
+            <SelectInput
+              id="department"
+              name="department"
+              onChange={handleDepartmentChange}
+            >
+              <option key="all" value="all">
+                All
               </option>
-            ))}
-          </SelectInput>
-        </InputRow>
+              <option key="debt" value="debt">
+                Debt
+              </option>
+              <option key="tax" value="tax">
+                Tax
+              </option>
+            </SelectInput>
+          </InputRow>
 
-        <InputRow>
-          <Label htmlFor='start-date'>Start Date:</Label>
-          <input
-            type='date'
-            id='start-date'
-            value={startDate}
-            onChange={e => handleStartDateChange(e)}
-          />
-        </InputRow>
+          <InputRow>
+            <Label htmlFor="enrolled">Enrolled:</Label>
+            <SelectInput
+              id="enrolled"
+              name="enrolled"
+              onChange={handleEnrolledChange}
+            >
+              <option key="all" value="all">
+                All
+              </option>
+              <option key="yes" value="yes">
+                Yes
+              </option>
+              <option key="no" value="no">
+                No
+              </option>
+            </SelectInput>
+          </InputRow>
 
-        <InputRow>
-          <Label htmlFor='end-date'>End Date:</Label>
-          <input
-            type='date'
-            id='end-date'
-            value={endDate}
-            onChange={e => setEndDate(e.target.value)}
-          />
-        </InputRow>
+          <InputRow>
+            <Label htmlFor="agentName">Agent:</Label>
+            <SelectInput
+              id="agentName"
+              name="agentName"
+              onChange={handleAgentChange}
+            >
+              <option key="all" value="all">
+                All
+              </option>
+              {agents.map((agent) => (
+                <option key={agent.id} value={agent.id}>
+                  {`${agent.fname} ${agent.lname}`}
+                </option>
+              ))}
+            </SelectInput>
+          </InputRow>
 
-        <InputRow className='export'>
-          <Btn disabled={isExporting} onClick={exportToExcel}>
-            Export
-          </Btn>
-        </InputRow>
+          <InputRow>
+            <Label htmlFor="start-date">Start Date:</Label>
+            <Input
+              type="date"
+              id="start-date"
+              value={startDate}
+              onChange={(e) => handleStartDateChange(e)}
+            />
+          </InputRow>
+
+          <InputRow>
+            <Label htmlFor="end-date">End Date:</Label>
+            <Input
+              type="date"
+              id="end-date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </InputRow>
+
+          <InputRow className="export">
+            <Btn disabled={isExporting} onClick={exportToExcel}>
+              Export
+            </Btn>
+          </InputRow>
+        </SectionNavRow>
+        <SectionNavRow>
+          <InputRow>
+            <Label htmlFor="searchTerm">Name | Phone #:</Label>
+            <Input
+              type="text"
+              id="searchTerm"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="searchInput"
+            />
+            {searchTerm && (
+              <CloseIcon onClick={handleClearSearchTerm}>X</CloseIcon>
+            )}
+            <SearchIconContainer
+              className={searchTerm && "translate"}
+              onClick={handleSearch}
+            >
+              <FaSearch />
+            </SearchIconContainer>
+          </InputRow>
+        </SectionNavRow>
       </SectionNavContainer>
       <ReportMainContent>
         <ReportTable>
@@ -386,14 +448,14 @@ const AdminReports = () => {
               <TableHead>Notes</TableHead>
               <TableHead>Enrolled</TableHead>
 
-              {(byDepartment === 'all' || byDepartment === 'debt') && (
+              {(byDepartment === "all" || byDepartment === "debt") && (
                 <>
                   <TableHead>Enrolled Amount</TableHead>
                   <TableHead>Not Enough Debt</TableHead>
                 </>
               )}
 
-              {(byDepartment === 'all' || byDepartment === 'tax') && (
+              {(byDepartment === "all" || byDepartment === "tax") && (
                 <>
                   <TableHead>State Liability</TableHead>
                   <TableHead>Federal Liability</TableHead>
@@ -404,16 +466,22 @@ const AdminReports = () => {
             </TableRow>
           </thead>
           <tbody ref={tableContainerRef}>
-            {reports.map(report => (
-              <ReportItem
-                setItemToUpdate={setItemToUpdate}
-                setDisplayUpdate={setDisplayUpdate}
-                byDepartment={byDepartment}
-                key={report.id}
-                report={report}
-                agent={getAgentName(report.agentId)}
-              />
-            ))}
+            {isLoading ? (
+              <LoaderContainer>
+                <LogoMotion size="medium" />
+              </LoaderContainer>
+            ) : (
+              (searchTerm ? searchedReports : reports).map((report) => (
+                <ReportItem
+                  setItemToUpdate={setItemToUpdate}
+                  setDisplayUpdate={setDisplayUpdate}
+                  byDepartment={byDepartment}
+                  key={report.id}
+                  report={report}
+                  agent={getAgentName(report.agentId)}
+                />
+              ))
+            )}
           </tbody>
         </ReportTable>
       </ReportMainContent>
@@ -425,9 +493,12 @@ const AdminReports = () => {
         />
       )}
 
-      <p>Total: {reports.length}</p>
+      <p>
+        Total:{" "}
+        {searchedReports.length > 0 ? searchedReports.length : reports.length}
+      </p>
     </MainContainer>
-  )
-}
+  );
+};
 
-export default AdminReports
+export default AdminReports;

@@ -117,8 +117,10 @@ const UpdateModal = ({ setDisplayUpdate, report }) => {
     setUpdatingReport(true)
 
     const formData = new FormData(formRef.current)
+    const rawPhone = formData.get('phone')
+    const phone = rawPhone.trim();
     const updatedReport = {
-      phone: formData.get('phone'),
+      phone,
       name: formData.get('name'),
       email: formData.get('email'),
       startTime,
@@ -129,7 +131,8 @@ const UpdateModal = ({ setDisplayUpdate, report }) => {
       stateLiability: formData.get('state-liability'),
       federalLiability: formData.get('federal-liability'),
       notEnoughDebt: formData.get('notEnoughDebt') === 'on',
-      transfer: parseInt(formData.get('transfer'), 10)
+      transfer: parseInt(formData.get('transfer'), 10),
+      'phoneSuffix': phone.slice(-4)
     }
 
     // Update the document in Firestore
