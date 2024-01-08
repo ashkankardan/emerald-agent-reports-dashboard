@@ -176,6 +176,18 @@ const AdminReports = () => {
     setIsExporting(false);
   };
 
+  const processSearchResult = (searchResults) => {
+    return searchResults.map((record) => {
+      const milliseconds = record.createdAt;
+      const seconds = Math.floor(milliseconds / 1000);
+      const nanoseconds = (milliseconds % 1000) * 1000000;
+
+      // Convert to Firestore Timestamp
+      record.createdAt = new Timestamp(seconds, nanoseconds);
+      return record;
+    });
+  };
+
   const handleSearch = async () => {
     if (!searchTerm || isLoading) return;
 
@@ -185,8 +197,8 @@ const AdminReports = () => {
     searchIndex
       .search(searchTerm)
       .then((response) => {
-        setSearchedReports(response.hits)
-        console.log(response);
+        const records = processSearchResult(response.hits);
+        setSearchedReports(records);
       })
       .catch((error) => {
         console.error("Error during Algolia search:", error);

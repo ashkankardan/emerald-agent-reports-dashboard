@@ -11,6 +11,10 @@ export const TableRow = styled.tr`
   width: 100%;
   table-layout: fixed;
   border-bottom: 2px solid purple;
+
+  &.lead {
+    background-color: #3D3D3D;
+  }
 `;
 
 export const TableData = styled.td`
