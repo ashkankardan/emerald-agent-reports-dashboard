@@ -260,7 +260,7 @@ const UpdateModal = ({ setDisplayUpdate, report }) => {
                 <InputRow>
                   <Label htmlFor="transfer">Transfer:</Label>
                   <SelectInput name="transfer" id="transfer" required>
-                    {[...Array(12)].map((_, index) => (
+                    {[...Array(20)].map((_, index) => (
                       <option key={index} value={index + 1}>
                         {index + 1}
                       </option>
@@ -339,7 +339,6 @@ const UpdateModal = ({ setDisplayUpdate, report }) => {
                     name="dob"
                     value={dob}
                     onChange={(e) => setDob(e.target.value)}
-                    required
                   />
                 </InputRow>
                 <InputRow>
@@ -352,7 +351,6 @@ const UpdateModal = ({ setDisplayUpdate, report }) => {
                     onChange={handleSsnChange}
                     maxLength="11" // 9 digits + 2 dashes
                     placeholder="XXX-XX-XXXX"
-                    required
                   />
                 </InputRow>
 

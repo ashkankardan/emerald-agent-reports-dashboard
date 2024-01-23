@@ -48,6 +48,7 @@ const NewModal = ({ setDisplayNewItem }) => {
     const name = formData.get("name");
     const rawPhone = formData.get("phone");
     const phone = rawPhone.trim();
+    const email = formData.get("email");
     const transfer = parseInt(formData.get("transfer"), 10);
     const notes = formData.get("notes");
     const enrolled = formData.get("enrolled") === "on";
@@ -63,6 +64,7 @@ const NewModal = ({ setDisplayNewItem }) => {
         createdAt: serverTimestamp(),
         name,
         phone,
+        email,
         transfer,
         startTime,
         duration,
@@ -151,7 +153,7 @@ const NewModal = ({ setDisplayNewItem }) => {
               <InputRow>
                 <Label htmlFor="transfer">Transfer:</Label>
                 <SelectInput name="transfer" id="transfer" required>
-                  {[...Array(12)].map((_, index) => (
+                  {[...Array(20)].map((_, index) => (
                     <option key={index} value={index + 1}>
                       {index + 1}
                     </option>
@@ -169,6 +171,15 @@ const NewModal = ({ setDisplayNewItem }) => {
                   required
                 />
               </InputRow>
+              <InputRow>
+                  <Label htmlFor="email">Email:</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    name="email"
+                    placeholder="john.doe@email.com"
+                  />
+                </InputRow>
               <InputRow>
                 <Label htmlFor="name">Name:</Label>
                 <Input
