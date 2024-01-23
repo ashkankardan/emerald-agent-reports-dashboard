@@ -334,7 +334,7 @@ const AdminReports = () => {
               <option key="all" value="all">
                 All
               </option>
-              {[...Array(12)].map((_, index) => (
+              {[...Array(20)].map((_, index) => (
                 <option key={index} value={index + 1}>
                   {index + 1}
                 </option>
