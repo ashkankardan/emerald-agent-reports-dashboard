@@ -358,3 +358,65 @@ exports.addPhoneSuffixToReports = functions.https.onRequest(async (req, res) => 
     res.status(500).send('Error updating documents');
   }
 });
+
+
+exports.receiveAssignedAgent = functions.https.onRequest(async (req, res) => {
+
+  const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+  const allowedOrigin = '2600:1900:2000:ea::'
+
+  // Check if the Origin header matches the allowed origin
+  if (ipAddress.startsWith(allowedOrigin)) {
+    res.send({ status: 'success', message: 'IP address allowed' });
+  } else {
+    res.status(403).send({ status: 'error', message: 'Access denied' });
+  }
+
+  const getCurrentFormattedTime = () => {
+    const format = 'hh:mm A'; // 12-hour format with AM/PM
+    const timezone = 'America/Los_Angeles';
+    return moment().tz(timezone).format(format);
+  }
+
+  try {
+    const usersRef = admin.firestore().collection('users');
+    const snapshot = await usersRef.where('id', '==', req.body.reportAgentId).get();
+
+    if (snapshot.empty) {
+      res.status(404).send('No user found with the given reportAgentId.');
+      return;
+    }
+
+    const user = snapshot.docs[0].data();
+    const userId = user.id;
+
+    // Add new report
+    const reportsRef = admin.firestore().collection('reports');
+
+    const newReportObj = {
+      "agentId": userId,
+      "createdAt": admin.firestore.FieldValue.serverTimestamp(),
+      "duration": "00:00:00",
+      "enrolled": false,
+      "email": req.body.email,
+      "enrolledAmount": "",
+      "name": req.body.name,
+      "notEnoughDebt": false,
+      "notes": `Access Code: ${req.body.accessCode}`,
+      'lead': true,
+      "phone": req.body.phone,
+      "startTime": getCurrentFormattedTime(),
+      "transfer": req.body.transfer,
+    }
+
+    const docRef = await reportsRef.add(newReportObj);
+    await reportsRef.doc(docRef.id).update({
+      id: docRef.id
+    });
+    res.send("Lead data received and saved with timestamp to Firestore");
+  } catch (error) {
+    res.status(500).send("Error saving report data");
+  }
+
+  res.send({ result: 'Data received successfully' });
+});
