@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react'
+import React, { useState, useEffect, useContext, useRef } from "react";
 import {
   Btn,
   Divider,
@@ -7,90 +7,91 @@ import {
   SectionNavContainer,
   TableHead,
   TableRow,
-  ReportMainContent
-} from './Reports.styles'
-import { UserContext } from '../../contexts/user-context'
+  ReportMainContent,
+} from "./Reports.styles";
+import { UserContext } from "../../contexts/user-context";
 import {
   reportsRef,
   query,
   where,
   getDocs,
   onSnapshot,
-  Timestamp
-} from '../../config'
-import NewItem from './NewItem'
-import ReportItem from './ReportItem'
-import UpdateModal from '../modals/update/UpdateModal'
-import NewModal from '../modals/new/NewModal'
-import { DebtTableHead } from './DebtTable.style'
-import { TaxTableHead } from './TaxTable.style'
+  Timestamp,
+} from "../../config";
+import NewItem from "./NewItem";
+import ReportItem from "./ReportItem";
+import UpdateModal from "../modals/update/UpdateModal";
+import NewModal from "../modals/new/NewModal";
+import { DebtTableHead } from "./DebtTable.style";
+import { TaxTableHead } from "./TaxTable.style";
 
 const Reports = () => {
-  const { user } = useContext(UserContext)
-  const [reports, setReports] = useState([])
-  const [displayNewItem, setDisplayNewItem] = useState(false)
-  const [displayUpdateItem, setDisplayUpdate] = useState(false)
-  const [itemToUpdate, setItemToUpdate] = useState(null)
+  const { user } = useContext(UserContext);
+  const [reports, setReports] = useState([]);
+  const [displayNewItem, setDisplayNewItem] = useState(false);
+  const [displayUpdateItem, setDisplayUpdate] = useState(false);
+  const [itemToUpdate, setItemToUpdate] = useState(null);
 
-  const tableContainerRef = useRef(null)
+
+  const tableContainerRef = useRef(null);
 
   useEffect(() => {
-    if (!user) return
+    if (!user) return;
 
     // // For example, querying documents created on November 11, 2023 in UTC-8
     // const startOfDate = new Date('2023-11-13T00:00:00-08:00') // Start of day in UTC-8
     // const endOfDate = new Date('2023-11-13T23:59:59-08:00') // End of day in UTC-8
 
     // Get the current date in UTC
-    const now = new Date()
+    const now = new Date();
 
     // Convert it to UTC-8
     // const offset = -8 * 60 // Offset in minutes for UTC-8
-    const offset = 1 // Offset in minutes for UTC-8
-    const nowInUTC8 = new Date(now.getTime() + offset * 60000)
+    const offset = 1; // Offset in minutes for UTC-8
+    const nowInUTC8 = new Date(now.getTime() + offset * 60000);
 
     // Set the start and end of the day in UTC-8
-    const startOfDate = new Date(nowInUTC8.setHours(0, 0, 0, 0))
-    const endOfDate = new Date(nowInUTC8.setHours(23, 59, 59, 999))
+    const startOfDate = new Date(nowInUTC8.setHours(0, 0, 0, 0));
+    const endOfDate = new Date(nowInUTC8.setHours(23, 59, 59, 999));
 
     // Convert to Firestore Timestamp
-    const startTimestamp = Timestamp.fromDate(startOfDate)
-    const endTimestamp = Timestamp.fromDate(endOfDate)
+    const startTimestamp = Timestamp.fromDate(startOfDate);
+    const endTimestamp = Timestamp.fromDate(endOfDate);
 
     // Create a compound query
     const reportsQuery = query(
       reportsRef,
-      where('agentId', '==', user.id),
-      where('createdAt', '>=', startTimestamp),
-      where('createdAt', '<=', endTimestamp)
-    )
+      where("agentId", "==", user.id),
+      where("createdAt", ">=", startTimestamp),
+      where("createdAt", "<=", endTimestamp)
+    );
 
     // Real-time subscription
     const unsubscribe = onSnapshot(
       reportsQuery,
-      snapshot => {
-        let tempReports = []
-        snapshot.forEach(doc => {
-          tempReports.push({ ...doc.data(), id: doc.id })
-        })
-        setReports(tempReports)
+      (snapshot) => {
+        let tempReports = [];
+        snapshot.forEach((doc) => {
+          tempReports.push({ ...doc.data(), id: doc.id });
+        });
+        setReports(tempReports);
       },
-      err => {
-        console.error('Error fetching reports: ', err.message)
+      (err) => {
+        console.error("Error fetching reports: ", err.message);
       }
-    )
+    );
 
     // Cleanup subscription on unmount
-    return () => unsubscribe()
-  }, [user])
+    return () => unsubscribe();
+  }, [user]);
 
   useEffect(() => {
     // Scroll to the bottom of the table container whenever rows are updated
     if (tableContainerRef.current) {
-      const { scrollHeight, clientHeight } = tableContainerRef.current
-      tableContainerRef.current.scrollTop = scrollHeight - clientHeight
+      const { scrollHeight, clientHeight } = tableContainerRef.current;
+      tableContainerRef.current.scrollTop = scrollHeight - clientHeight;
     }
-  }, [reports])
+  }, [reports]);
 
   return (
     <MainContainer>
@@ -105,7 +106,7 @@ const Reports = () => {
         <ReportTable>
           <thead>
             <TableRow>
-              {(user.role === 'admin' || user.role === 'super-admin') && (
+              {(user.role === "admin" || user.role === "super-admin") && (
                 <>
                   <TableHead>TSFR #</TableHead>
                   <TableHead>Phone #</TableHead>
@@ -119,7 +120,7 @@ const Reports = () => {
                 </>
               )}
 
-              {user.department === 'debt' && (
+              {user.department === "debt" && (
                 <>
                   <DebtTableHead>TSFR #</DebtTableHead>
                   <DebtTableHead>Phone #</DebtTableHead>
@@ -133,7 +134,7 @@ const Reports = () => {
                 </>
               )}
 
-              {user.department === 'tax' && (
+              {user.department === "tax" && (
                 <>
                   <TaxTableHead>TSFR #</TaxTableHead>
                   <TaxTableHead>Phone #</TaxTableHead>
@@ -151,7 +152,7 @@ const Reports = () => {
             </TableRow>
           </thead>
           <tbody ref={tableContainerRef}>
-            {reports.map(report => (
+            {reports.map((report) => (
               <ReportItem
                 setItemToUpdate={setItemToUpdate}
                 setDisplayUpdate={setDisplayUpdate}
@@ -171,7 +172,7 @@ const Reports = () => {
 
       <p>Total: {reports.length}</p>
     </MainContainer>
-  )
-}
+  );
+};
 
-export default Reports
+export default Reports;

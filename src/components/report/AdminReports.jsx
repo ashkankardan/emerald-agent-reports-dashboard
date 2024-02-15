@@ -56,6 +56,7 @@ const AdminReports = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [enrollmentSum, setEnrollmentSum] = useState("0");
 
   const algoliaAppId = process.env.REACT_APP_ALGOLIA_APP_ID;
   const algoliaApiKey = process.env.REACT_APP_ALGOLIA_API_KEY;
@@ -316,6 +317,31 @@ const AdminReports = () => {
       tableContainerRef.current.scrollTop = scrollHeight - clientHeight;
     }
   }, [reports]);
+
+  useEffect(() => {
+    if (!reports || reports.length < 1) return;
+
+    const total = reports.reduce((acc, report) => {
+      if (report.enrolledAmount) {
+        // Remove commas and convert the string to a float
+        const amount = parseFloat(report.enrolledAmount.replace(/,/g, ""));
+        return acc + amount;
+      }
+      return acc;
+    }, 0);
+
+    const formattedTotal = total.toLocaleString("en-US", {
+      style: "decimal",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+
+    setEnrollmentSum(formattedTotal);
+  }, [reports]);
+
+  useEffect(() => {
+    console.log('enrollmentSum: ', enrollmentSum)
+  }, [enrollmentSum])
 
   return (
     <MainContainer>
