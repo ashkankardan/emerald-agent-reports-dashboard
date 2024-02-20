@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { UserContext } from "../../contexts/user-context";
+import useCalcEnrolledAmount from "../../hooks/useCalcEnrolledAmount";
 import {
   usersRef,
   reportsRef,
@@ -35,9 +36,9 @@ import * as XLSX from "xlsx";
 import { FaSearch } from "react-icons/fa";
 import LogoMotion from "../logo-motion/LogoMotion";
 import algoliasearch from "algoliasearch";
+import Stats from "../stats/Stats";
 
 const AdminReports = () => {
-  const { user } = useContext(UserContext);
   const [reports, setReports] = useState([]);
   const [searchedReports, setSearchedReports] = useState([]);
   const [displayUpdateItem, setDisplayUpdate] = useState(false);
@@ -56,7 +57,11 @@ const AdminReports = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [enrollmentSum, setEnrollmentSum] = useState("0");
+
+  const { user } = useContext(UserContext);
+  const { formattedTotal, recalculateTotal } = useCalcEnrolledAmount({
+    reports,
+  });
 
   const algoliaAppId = process.env.REACT_APP_ALGOLIA_APP_ID;
   const algoliaApiKey = process.env.REACT_APP_ALGOLIA_API_KEY;
@@ -319,29 +324,8 @@ const AdminReports = () => {
   }, [reports]);
 
   useEffect(() => {
-    if (!reports || reports.length < 1) return;
-
-    const total = reports.reduce((acc, report) => {
-      if (report.enrolledAmount) {
-        // Remove commas and convert the string to a float
-        const amount = parseFloat(report.enrolledAmount.replace(/,/g, ""));
-        return acc + amount;
-      }
-      return acc;
-    }, 0);
-
-    const formattedTotal = total.toLocaleString("en-US", {
-      style: "decimal",
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
-
-    setEnrollmentSum(formattedTotal);
+    recalculateTotal();
   }, [reports]);
-
-  useEffect(() => {
-    console.log('enrollmentSum: ', enrollmentSum)
-  }, [enrollmentSum])
 
   return (
     <MainContainer>
@@ -531,10 +515,12 @@ const AdminReports = () => {
         />
       )}
 
-      <p>
-        Total:{" "}
-        {searchedReports.length > 0 ? searchedReports.length : reports.length}
-      </p>
+      <Stats
+        count={
+          searchedReports.length > 0 ? searchedReports.length : reports.length
+        }
+        amount={formattedTotal}
+      />
     </MainContainer>
   );
 };
