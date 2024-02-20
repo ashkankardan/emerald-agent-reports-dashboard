@@ -10,6 +10,7 @@ import {
   ReportMainContent,
 } from "./Reports.styles";
 import { UserContext } from "../../contexts/user-context";
+import useCalcEnrolledAmount from "../../hooks/useCalcEnrolledAmount";
 import {
   reportsRef,
   query,
@@ -24,14 +25,18 @@ import UpdateModal from "../modals/update/UpdateModal";
 import NewModal from "../modals/new/NewModal";
 import { DebtTableHead } from "./DebtTable.style";
 import { TaxTableHead } from "./TaxTable.style";
+import Stats from "../stats/Stats";
 
 const Reports = () => {
-  const { user } = useContext(UserContext);
   const [reports, setReports] = useState([]);
   const [displayNewItem, setDisplayNewItem] = useState(false);
   const [displayUpdateItem, setDisplayUpdate] = useState(false);
   const [itemToUpdate, setItemToUpdate] = useState(null);
 
+  const { user } = useContext(UserContext);
+  const { formattedTotal, recalculateTotal } = useCalcEnrolledAmount({
+    reports,
+  });
 
   const tableContainerRef = useRef(null);
 
@@ -91,6 +96,10 @@ const Reports = () => {
       const { scrollHeight, clientHeight } = tableContainerRef.current;
       tableContainerRef.current.scrollTop = scrollHeight - clientHeight;
     }
+  }, [reports]);
+
+  useEffect(() => {
+    recalculateTotal();
   }, [reports]);
 
   return (
@@ -170,7 +179,7 @@ const Reports = () => {
         />
       )}
 
-      <p>Total: {reports.length}</p>
+      <Stats count={reports.length} amount={formattedTotal} />
     </MainContainer>
   );
 };
