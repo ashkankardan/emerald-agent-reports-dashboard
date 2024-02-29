@@ -118,6 +118,7 @@ const Reports = () => {
               {(user.role === "admin" || user.role === "super-admin") && (
                 <>
                   <TableHead>TSFR #</TableHead>
+                  <TableHead>Access Code</TableHead>
                   <TableHead>Phone #</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead>Start Time</TableHead>
@@ -132,6 +133,7 @@ const Reports = () => {
               {user.department === "debt" && (
                 <>
                   <DebtTableHead>TSFR #</DebtTableHead>
+                  <TableHead>Access Code</TableHead>
                   <DebtTableHead>Phone #</DebtTableHead>
                   <DebtTableHead>Name</DebtTableHead>
                   <DebtTableHead>Start Time</DebtTableHead>
@@ -146,6 +148,7 @@ const Reports = () => {
               {user.department === "tax" && (
                 <>
                   <TaxTableHead>TSFR #</TaxTableHead>
+                  <TableHead>Access Code</TableHead>
                   <TaxTableHead>Phone #</TaxTableHead>
                   <TaxTableHead>Name</TaxTableHead>
                   <TaxTableHead>Start Time</TaxTableHead>

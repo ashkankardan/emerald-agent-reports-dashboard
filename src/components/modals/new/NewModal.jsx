@@ -57,6 +57,7 @@ const NewModal = ({ setDisplayNewItem }) => {
     const enrolledAmount = formData.get("enrolled-amount");
     const stateLiability = formData.get("state-liability");
     const federalLiability = formData.get("federal-liability");
+    const accessCode = formData.get("accessCode");
 
     try {
       const docRef = await addDoc(reportsRef, {
@@ -76,6 +77,7 @@ const NewModal = ({ setDisplayNewItem }) => {
         stateLiability,
         federalLiability,
         phoneSuffix: phone.slice(-4),
+        accessCode,
       });
 
       // Then, update the document with its generated ID
@@ -172,14 +174,14 @@ const NewModal = ({ setDisplayNewItem }) => {
                 />
               </InputRow>
               <InputRow>
-                  <Label htmlFor="email">Email:</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    name="email"
-                    placeholder="john.doe@email.com"
-                  />
-                </InputRow>
+                <Label htmlFor="email">Email:</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  name="email"
+                  placeholder="john.doe@email.com"
+                />
+              </InputRow>
               <InputRow>
                 <Label htmlFor="name">Name:</Label>
                 <Input
@@ -273,6 +275,10 @@ const NewModal = ({ setDisplayNewItem }) => {
               <InputRow>
                 <Label htmlFor="lead">Lead:</Label>
                 <CheckboxInput type="checkbox" id="lead" name="lead" />
+              </InputRow>
+              <InputRow>
+                <Label htmlFor="accessCode">Access Code:</Label>
+                <Input type="text" id="accessCode" name="accessCode" />
               </InputRow>
             </TopRightCol>
           </TopRow>

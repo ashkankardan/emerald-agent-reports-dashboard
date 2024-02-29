@@ -25,18 +25,19 @@ export const TableData = styled.td`
 
   &:nth-child(1) { width: 83px; }
   &:nth-child(2) { width: 100px; }
-  &:nth-child(3) { width: 60px; }
+  &:nth-child(3) { width: 100px; }
   &:nth-child(4) { width: 120px; }
-  &:nth-child(5) { width: 100px; }
-  &:nth-child(6) { width: 90px; }
-  &:nth-child(7) { width: 87px; }
+  &:nth-child(5) { width: 120px; }
+  &:nth-child(6) { width: 100px; }
+  &:nth-child(7) { width: 90px; }
+  &:nth-child(8) { width: 87px; }
 
-  &:nth-child(9) { width: 81px; }
-  &:nth-child(10) { width: 100px; }
+  &:nth-child(10) { width: 81px; }
   &:nth-child(11) { width: 100px; }
   &:nth-child(12) { width: 100px; }
   &:nth-child(13) { width: 100px; }
   &:nth-child(14) { width: 100px; }
+  &:nth-child(15) { width: 100px; }
 
   &:nth-last-child(1) {
     width: 100px;

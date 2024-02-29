@@ -103,10 +103,11 @@ export const TableHead = styled.th`
 
   &:nth-child(1) { width: 60px; }
   &:nth-child(2) { width: 120px; }
-  &:nth-child(3) { width: 100px; }
-  &:nth-child(4) { width: 90px; }
-  &:nth-child(5) { width: 87px; }
-  &:nth-child(7) { width: 100px; }
+  &:nth-child(3) { width: 120px; }
+  &:nth-child(4) { width: 100px; }
+  &:nth-child(5) { width: 90px; }
+  &:nth-child(7) { width: 87px; }
+  &:nth-child(8) { width: 100px; }
 
   &:nth-last-child(1) { width: 100px; }
 `

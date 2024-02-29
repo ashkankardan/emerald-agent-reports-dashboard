@@ -463,6 +463,7 @@ const AdminReports = () => {
               <TableHead>Date</TableHead>
               <TableHead>Agent</TableHead>
               <TableHead>TSFR #</TableHead>
+              <TableHead>Access Code</TableHead>
               <TableHead>Phone #</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Start Time</TableHead>

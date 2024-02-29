@@ -84,6 +84,7 @@ const UpdateModal = ({ setDisplayUpdate, report }) => {
     if (report && formRef.current) {
       formRef.current.elements["phone"].value = report.phone || "";
       formRef.current.elements["name"].value = report.name || "";
+      formRef.current.elements["accessCode"].value = report.accessCode || "";
       formRef.current.elements["email"].value = report.email || "";
       formRef.current.elements["dob"].value = report.dob || "";
       setDob(report.dob || "");
@@ -131,6 +132,7 @@ const UpdateModal = ({ setDisplayUpdate, report }) => {
       notes: formData.get("notes"),
       enrolled: formData.get("enrolled") === "on",
       lead: formData.get("lead") === "on",
+      accessCode: formData.get("accessCode"),
       enrolledAmount: formData.get("enrolled-amount"),
       stateLiability: formData.get("state-liability"),
       federalLiability: formData.get("federal-liability"),
@@ -327,6 +329,11 @@ const UpdateModal = ({ setDisplayUpdate, report }) => {
                 <InputRow>
                   <Label htmlFor="lead">Lead:</Label>
                   <CheckboxInput type="checkbox" id="lead" name="lead" />
+                </InputRow>
+
+                <InputRow>
+                  <Label htmlFor="accessCode">Access Code:</Label>
+                  <Input type="text" id="accessCode" name="accessCode" />
                 </InputRow>
               </TopLeftCol>
 
