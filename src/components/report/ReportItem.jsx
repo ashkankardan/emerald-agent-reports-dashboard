@@ -46,6 +46,7 @@ const ReportItem = ({
           <TableData className={byDepartment}>{createdAtFormatted}</TableData>
           <TableData className={byDepartment}>{agent}</TableData>
           <TableData className={byDepartment}>{report.transfer}</TableData>
+          <TableData className={byDepartment}>{report.accessCode}</TableData>
           <TableData className={byDepartment}>{report.phone}</TableData>
           <TableData className={byDepartment}>{report.name}</TableData>
           <TableData className={byDepartment}>{report.startTime}</TableData>
@@ -80,6 +81,7 @@ const ReportItem = ({
       {user.department === "debt" && (
         <>
           <DebtTableData>{report.transfer}</DebtTableData>
+          <DebtTableData>{report.accessCode}</DebtTableData>
           <DebtTableData>{report.phone}</DebtTableData>
           <DebtTableData>{report.name}</DebtTableData>
           <DebtTableData>{report.startTime}</DebtTableData>
@@ -94,6 +96,7 @@ const ReportItem = ({
       {user.department === "tax" && (
         <>
           <TaxTableData>{report.transfer}</TaxTableData>
+          <TaxTableData>{report.accessCode}</TaxTableData>
           <TaxTableData>{report.phone}</TaxTableData>
           <TaxTableData>{report.name}</TaxTableData>
           <TaxTableData>{report.startTime}</TaxTableData>

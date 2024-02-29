@@ -365,7 +365,7 @@ exports.receiveAssignedAgent = functions.https.onRequest(async (req, res) => {
   const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress
   const allowedOrigin = '2600:1900:2000:'
 
-  console.log('init ipAddress: ', ipAddress)
+  // console.log('init ipAddress: ', ipAddress)
 
 
   // Check if the Origin header matches the allowed origin
@@ -406,7 +406,7 @@ exports.receiveAssignedAgent = functions.https.onRequest(async (req, res) => {
       enrolledAmount: "",
       name: req.body.name,
       notEnoughDebt: false,
-      notes: `Access Code: ${req.body.accessCode}`,
+      accessCode: req.body.accessCode,
       lead: true,
       phone: req.body.phone,
       startTime: getCurrentFormattedTime(),
