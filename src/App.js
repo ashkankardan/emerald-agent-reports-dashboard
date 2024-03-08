@@ -10,6 +10,7 @@ import Login from './pages/login/Login';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import LogoMotion from './components/logo-motion/LogoMotion';
+import ViewProvider from './contexts/view-context';
 
 function App() {
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -42,29 +43,31 @@ function App() {
   return (
     <>
       <UserProvider>
-        <Layouts>
-          <Routes>
-            {/* Public Route */}
-            <Route path="/secured/:id" element={<DynamicForm />} />
+        <ViewProvider>
+          <Layouts>
+            <Routes>
+              {/* Public Route */}
+              <Route path="/secured/:id" element={<DynamicForm />} />
 
-            <Route path="*" element={
-              <LogoMotion />
-            } />
+              <Route path="*" element={
+                <LogoMotion />
+              } />
 
-            {/* Protected Routes */}
-            {isAuthorized ? (
-              <>
-                <Route path="/" element={<Home />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/agent" element={<Agent />} />
-                <Route path="/admin" element={<Admin />} />
-              </>
-            ) : (
-              <Route path="*" element={<LogoMotion />} />
-            )}
-          </Routes>
-        </Layouts>
+              {/* Protected Routes */}
+              {isAuthorized ? (
+                <>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/signup" element={<Signup />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/agent" element={<Agent />} />
+                  <Route path="/admin" element={<Admin />} />
+                </>
+              ) : (
+                <Route path="*" element={<LogoMotion />} />
+              )}
+            </Routes>
+          </Layouts>
+        </ViewProvider>
       </UserProvider>
     </>
   );

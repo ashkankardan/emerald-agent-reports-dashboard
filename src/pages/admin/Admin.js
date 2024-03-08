@@ -1,17 +1,19 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { MainContainer } from './Admin.styles';
-import BackBTN from '../../components/back-btn/BackBTN';
-import { usersRef, getDocs, signOut, auth } from '../../config';
+import { signOut, auth } from '../../config';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/user-context';
+import { ViewContext } from '../../contexts/view-context.js';
 import AdminReports from '../../components/report/AdminReports.jsx';
 import SuperAdmin from '../../components/super-admin/SuperAdmin';
+import EnrollmentsReports from '../../components/report/EnrollmentsReports.jsx';
 
 
-const Admin = () => {
+const Admin = ({ reportView }) => {
   const [adminView, setAdminView] = useState('admin')
 
   const { user, setUser } = useContext(UserContext)
+  const { view } = useContext(ViewContext)
 
   const navigate = useNavigate();
 
@@ -47,8 +49,15 @@ const Admin = () => {
 
   return (
     <MainContainer>
-      {adminView === 'admin' && <AdminReports />}
-      {adminView === 'superAdmin' && <SuperAdmin />}
+      {
+        view === 'daily' && <>
+          {adminView === 'admin' && <AdminReports />}
+          {adminView === 'superAdmin' && <SuperAdmin />}
+        </>
+      }
+      {
+        view === 'enrollment' && <EnrollmentsReports />
+      }
       {/* <BackBTN /> */}
     </MainContainer>
   );

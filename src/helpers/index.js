@@ -1,0 +1,18 @@
+export const formatPriceAmount = (input) => {
+  let inputStr = input.toString();
+  let result = '';
+  let length = inputStr.length;
+  let count = 0;
+
+  // Start from the rightmost digit and move towards the left
+  for (let i = length - 1; i >= 0; i--) {
+    result = inputStr[i] + result;
+    count++;
+    // Insert a comma after every 3 digits, except at the beginning
+    if (count % 3 === 0 && i !== 0) {
+      result = ',' + result;
+    }
+  }
+
+  return result;
+}

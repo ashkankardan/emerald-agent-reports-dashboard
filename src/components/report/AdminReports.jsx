@@ -30,6 +30,7 @@ import {
   SearchIconContainer,
   CloseIcon,
   LoaderContainer,
+  InputRowGroup,
 } from "./AdminReports.styles";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
@@ -428,11 +429,13 @@ const AdminReports = () => {
             />
           </InputRow>
 
-          <InputRow className="export">
-            <Btn disabled={isExporting} onClick={exportToExcel}>
-              Export
-            </Btn>
-          </InputRow>
+          <InputRowGroup>
+            <InputRow className="export">
+              <Btn disabled={isExporting} onClick={exportToExcel}>
+                Export
+              </Btn>
+            </InputRow>
+          </InputRowGroup>
         </SectionNavRow>
         <SectionNavRow>
           <InputRow>
