@@ -87,6 +87,11 @@ export const InputRow = styled.div`
   }
 `
 
+export const InputRowGroup = styled.div`
+display: flex;
+column-gap: 10px;
+`
+
 export const Label = styled.label`
   margin-right: 10px;
   display: inline-block;
