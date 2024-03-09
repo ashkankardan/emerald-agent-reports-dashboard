@@ -363,9 +363,9 @@ exports.addPhoneSuffixToReports = functions.https.onRequest(async (req, res) => 
 exports.receiveAssignedAgent = functions.https.onRequest(async (req, res) => {
 
   const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress
-  const allowedOrigin = '2600:1900:2000:'
+  const allowedOrigin = '2600:1900:20'
 
-  // console.log('init ipAddress: ', ipAddress)
+  console.log('init ipAddress: ', ipAddress)
 
 
   // Check if the Origin header matches the allowed origin

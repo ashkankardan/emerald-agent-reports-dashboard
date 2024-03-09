@@ -10,6 +10,8 @@ import logoImg from "../../assets/img/EmeraldGain-FinancialGroup-favicon.png";
 
 const EnrollmentsStats = ({ enrollments }) => {
   const [total, setTotal] = useState({
+    cancellationCount: 0,
+    cancellationAmount: 0,
     dayCount: 0,
     dayAmount: 0,
     pendingCount: 0,
@@ -24,6 +26,8 @@ const EnrollmentsStats = ({ enrollments }) => {
     console.log("enrollments: ", enrollments);
 
     const tempTotal = {
+      cancellationCount: 0,
+      cancellationAmount: 0,
       dayCount: 0,
       dayAmount: 0,
       pendingCount: 0,
@@ -36,6 +40,8 @@ const EnrollmentsStats = ({ enrollments }) => {
 
     const totals = enrollments.reduce(
       (acc, obj) => {
+        acc.cancellationCount += Number(obj.cancellationCount);
+        acc.cancellationAmount += Number(obj.cancellationAmount);
         acc.dayCount += Number(obj.dayCount);
         acc.dayAmount += Number(obj.dayAmount);
         acc.pendingCount += Number(obj.pendingCount);
@@ -54,12 +60,14 @@ const EnrollmentsStats = ({ enrollments }) => {
 
   return (
     <TableRow>
+      <TableData>${formatPriceAmount(total.cancellationAmount)}</TableData>
+      <TableData className="counts">{total.cancellationCount}</TableData>
       <TableData>Total</TableData>
-      <TableData>{total.dayCount}</TableData>
+      <TableData className="counts">{total.dayCount}</TableData>
       <TableData>${formatPriceAmount(total.dayAmount)}</TableData>
-      <TableData>{total.pendingCount}</TableData>
+      <TableData className="counts">{total.pendingCount}</TableData>
       <TableData>${formatPriceAmount(total.pendingAmount)}</TableData>
-      <TableData>{total.weekCount}</TableData>
+      <TableData className="counts">{total.weekCount}</TableData>
       <TableData>${formatPriceAmount(total.weekAmount)}</TableData>
       <TableData>${formatPriceAmount(total.monthAmount)}</TableData>
       <TableData>${formatPriceAmount(total.quarterAmount)}</TableData>
