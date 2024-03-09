@@ -16,15 +16,21 @@ export const TableData = styled.td`
   text-align: left;
   padding: 8px;
   line-height: 1.5;
-  width: 100px;
+  width: 110px;
   font-weight: bold;
+  font-size: 14px;
 
-  &:nth-child(1) { width: 180px; }
+  &:nth-child(3) { width: 120px; }
 
   &:nth-last-child(1) {
     button {
       width: 100%;
     }
+  }
+
+  &.counts {
+    background-color: gray;
+    color: black;
   }
 `;
 

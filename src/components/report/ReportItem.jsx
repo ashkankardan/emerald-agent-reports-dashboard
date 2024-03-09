@@ -4,6 +4,7 @@ import { UserContext } from "../../contexts/user-context";
 import { DebtTableData } from "./DebtTable.style";
 import { TaxTableData } from "./TaxTable.style";
 import { format } from "date-fns";
+import { getDurationHour, getDurationSplit } from "../../helpers";
 
 const ReportItem = ({
   report,
@@ -13,6 +14,7 @@ const ReportItem = ({
   byDepartment,
 }) => {
   const [createdAtFormatted, setCreatedAtFormatted] = useState("N/A");
+  const [durationHour, setDurationHour] = useState("");
 
   const { user } = useContext(UserContext);
 
@@ -39,8 +41,26 @@ const ReportItem = ({
     }
   }, [report]);
 
+  useEffect(() => {
+    const hour = getDurationSplit(report.duration).hour;
+    const min = getDurationSplit(report.duration).min;
+    let durationClassName = "";
+    if (hour > 0) {
+      durationClassName = "over1Hour";
+    } else {
+      if (min > 20) {
+        durationClassName = "over20Min";
+      } else {
+        if (min < 2) {
+          durationClassName = "under2Min";
+        }
+      }
+    }
+    setDurationHour(durationClassName);
+  }, [report]);
+
   return (
-    <TableRow className={report.lead && 'lead'}>
+    <TableRow className={report.lead && "lead"}>
       {(user.role === "admin" || user.role === "super-admin") && (
         <>
           <TableData className={byDepartment}>{createdAtFormatted}</TableData>
@@ -50,7 +70,7 @@ const ReportItem = ({
           <TableData className={byDepartment}>{report.phone}</TableData>
           <TableData className={byDepartment}>{report.name}</TableData>
           <TableData className={byDepartment}>{report.startTime}</TableData>
-          <TableData className={byDepartment}>{report.duration}</TableData>
+          <TableData className={durationHour}>{report.duration}</TableData>
           <TableData className={byDepartment}>{report.notes}</TableData>
           <TableData className={byDepartment}>
             {report.enrolled ? "Yes" : "No"}
@@ -85,7 +105,9 @@ const ReportItem = ({
           <DebtTableData>{report.phone}</DebtTableData>
           <DebtTableData>{report.name}</DebtTableData>
           <DebtTableData>{report.startTime}</DebtTableData>
-          <DebtTableData>{report.duration}</DebtTableData>
+          <DebtTableData className={toString(report.duration)}>
+            {report.duration}
+          </DebtTableData>
           <DebtTableData>{report.notes}</DebtTableData>
           <DebtTableData>{report.enrolled ? "Yes" : "No"}</DebtTableData>
           <DebtTableData>{report.enrolledAmount}</DebtTableData>
@@ -100,7 +122,9 @@ const ReportItem = ({
           <TaxTableData>{report.phone}</TaxTableData>
           <TaxTableData>{report.name}</TaxTableData>
           <TaxTableData>{report.startTime}</TaxTableData>
-          <TaxTableData>{report.duration}</TaxTableData>
+          <TaxTableData className={toString(report.duration)}>
+            {report.duration}
+          </TaxTableData>
           <TaxTableData>{report.notes}</TaxTableData>
           <TaxTableData>{report.enrolled ? "Yes" : "No"}</TaxTableData>
           <TaxTableData>{report.stateLiability}</TaxTableData>

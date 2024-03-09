@@ -72,9 +72,47 @@ export const TableHead = styled.th`
   border: 1px solid purple;
   text-align: left;
   padding: 8px;
-  width: 100px;
+  width: 110px;
+  font-size: 14px;
 
-  &:nth-child(1) { width: 180px; }
+  &:nth-child(3) { width: 120px; }
+
+  &.cancellationCount {
+    background-color: red;
+    color: black;
+  }
+
+  &.cancellationAmount {
+    background-color: orange;
+    color: black;
+  }
+
+  &.dayAmount {
+    background-color: #008000;
+    color: black;
+  }
+
+  &.pendingAmount {
+    background-color: lightgreen;
+    color: black;
+  }
+
+  &.weekAmount {
+    background-color: darkolivegreen;
+    color: black;
+  }
+
+  &.monthAmount {
+    background-color: darkgreen;
+    color: black;
+  }
+
+  &.quarterAmount {
+    background-color: teal;
+    color: black;
+  }
+
+
 
 `
 

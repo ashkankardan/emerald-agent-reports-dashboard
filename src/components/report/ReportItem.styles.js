@@ -45,6 +45,22 @@ export const TableData = styled.td`
       width: 100%;
     }
   }
+
+  &.under2Min {
+    background-color: #FFD700; // gold
+    color: black;
+  }
+
+  &.over20Min {
+    background-color: #008080; // green
+    color: black;
+  }
+
+  &.over1Hour {
+    background-color: #C0C0C0; // gray
+    color: black;
+  }
+
 `;
 
 export const Divider = styled.div`

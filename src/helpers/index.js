@@ -16,3 +16,30 @@ export const formatPriceAmount = (input) => {
 
   return result;
 }
+
+export const getDurationSplit = (duration) => {
+  const hour = Number(duration.split(':')[0])
+  const min = Number(duration.split(':')[1])
+  const splitObj = { hour, min }
+  return splitObj
+}
+
+export const sortEnrollments = (enrollments) => {
+  const sortedData = [...enrollments].sort((a, b) => {
+    if (b['dayCount'] !== a['dayCount']) {
+      return b['dayCount'] - a['dayCount'];
+    } else if (b['dayAmount'] !== a['dayAmount']) {
+      return b['dayAmount'] - a['dayAmount'];
+    } else if (b['weekAmount'] !== a['weekAmount']) {
+      return b['weekAmount'] - a['weekAmount'];
+    } else if (b['monthAmount'] !== a['monthAmount']) {
+      return b['monthAmount'] - a['monthAmount'];
+    } else if (b['quarterAmount'] !== a['quarterAmount']) {
+      return b['quarterAmount'] - a['quarterAmount'];
+    } else {
+      return a['fname'].localeCompare(b['fname']);
+    }
+  })
+
+  return sortedData
+}

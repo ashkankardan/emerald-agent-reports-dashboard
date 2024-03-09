@@ -8,21 +8,19 @@ import {
 } from "./EnrollmentsReports.styles";
 import {
   enrollmentsRef,
-  getDocs,
   query,
   onSnapshot,
-  Timestamp,
-  functions,
-  httpsCallable,
 } from "../../config";
 import EnrollmentsReportItem from "./EnrollmentsReportItem";
 import EnrollmentsUpdateModal from "../modals/enrollments-update/EnrollmentsUpdateModal";
 import EnrollmentsStats from "../stats/EnrollmentsStats";
+import { sortEnrollments } from "../../helpers";
 
 const EnrollmentsReports = ({ setReportView }) => {
   const [enrollments, setEnrollments] = useState([]);
   const [displayUpdateItem, setDisplayUpdate] = useState(false);
   const [itemToUpdate, setItemToUpdate] = useState(null);
+  const [sortedData, setSortedData] = useState([])
 
   useEffect(() => {
     let unsubscribe;
@@ -62,8 +60,12 @@ const EnrollmentsReports = ({ setReportView }) => {
   }, []);
 
   useEffect(() => {
-    console.log("Enrollments: ", enrollments);
-  }, [enrollments]);
+    if (!enrollments) return
+
+    const sortedData = sortEnrollments(enrollments)
+
+    setSortedData(sortedData)
+  }, [enrollments])
 
   return (
     <MainContainer>
@@ -71,20 +73,22 @@ const EnrollmentsReports = ({ setReportView }) => {
         <ReportTable>
           <thead>
             <TableRow>
+              <TableHead className="cancellationCount">Cancellation $</TableHead>
+              <TableHead className="cancellationAmount">Cancellation #</TableHead>
               <TableHead>Agent</TableHead>
               <TableHead>Day #</TableHead>
-              <TableHead>Day $</TableHead>
+              <TableHead className="dayAmount">Day $</TableHead>
               <TableHead>Pending #</TableHead>
-              <TableHead>Pending $</TableHead>
+              <TableHead className="pendingAmount">Pending $</TableHead>
               <TableHead>Week #</TableHead>
-              <TableHead>Week $</TableHead>
-              <TableHead>Month $</TableHead>
-              <TableHead>Quarter $</TableHead>
+              <TableHead className="weekAmount">Week $</TableHead>
+              <TableHead className="monthAmount">Month $</TableHead>
+              <TableHead className="quarterAmount">Quarter $</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </thead>
           <tbody>
-            {enrollments.map((agentEnrollments) => {
+            {sortedData && sortedData.map((agentEnrollments) => {
               return (
                 <EnrollmentsReportItem
                   key={agentEnrollments.id}

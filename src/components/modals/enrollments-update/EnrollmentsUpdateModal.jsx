@@ -24,6 +24,10 @@ const EnrollmentsUpdateModal = ({ setDisplayUpdate, agentEnrollments }) => {
   // Setting default values when the component mounts
   useEffect(() => {
     if (agentEnrollments && formRef.current) {
+      formRef.current.elements["cancellationAmount"].value =
+        agentEnrollments.cancellationAmount;
+      formRef.current.elements["cancellationCount"].value =
+        agentEnrollments.cancellationCount;
       formRef.current.elements["dayCount"].value = agentEnrollments.dayCount;
       formRef.current.elements["dayAmount"].value = agentEnrollments.dayAmount;
       formRef.current.elements["pendingCount"].value =
@@ -48,6 +52,8 @@ const EnrollmentsUpdateModal = ({ setDisplayUpdate, agentEnrollments }) => {
     const formData = new FormData(formRef.current);
 
     const updatedEnrollments = {
+      cancellationCount: formData.get("cancellationCount"),
+      cancellationAmount: formData.get("cancellationAmount"),
       dayCount: formData.get("dayCount"),
       dayAmount: formData.get("dayAmount"),
       pendingCount: formData.get("pendingCount"),
@@ -94,22 +100,22 @@ const EnrollmentsUpdateModal = ({ setDisplayUpdate, agentEnrollments }) => {
             <BottomRow>
               <BottomLeftCol>
                 <InputRow>
-                  <Label htmlFor="dayCount">Day Count:</Label>
-                  <Input type="number" id="dayCount" name="dayCount" required />
-                </InputRow>
-
-                <InputRow>
-                  <Label htmlFor="dayAmount">Day Amount:</Label>
+                  <Label htmlFor="cancellationCount">Cancellation #:</Label>
                   <Input
                     type="number"
-                    id="dayAmount"
-                    name="dayAmount"
+                    id="cancellationCount"
+                    name="cancellationCount"
                     required
                   />
                 </InputRow>
 
                 <InputRow>
-                  <Label htmlFor="pendingCount">Pending Count:</Label>
+                  <Label htmlFor="dayCount">Day #:</Label>
+                  <Input type="number" id="dayCount" name="dayCount" required />
+                </InputRow>
+
+                <InputRow>
+                  <Label htmlFor="pendingCount">Pending #:</Label>
                   <Input
                     type="number"
                     id="pendingCount"
@@ -119,19 +125,7 @@ const EnrollmentsUpdateModal = ({ setDisplayUpdate, agentEnrollments }) => {
                 </InputRow>
 
                 <InputRow>
-                  <Label htmlFor="pendingAmount">Pending Amount:</Label>
-                  <Input
-                    type="number"
-                    id="pendingAmount"
-                    name="pendingAmount"
-                    required
-                  />
-                </InputRow>
-              </BottomLeftCol>
-
-              <BottomRightCol>
-                <InputRow>
-                  <Label htmlFor="weekCount">Week Count:</Label>
+                  <Label htmlFor="weekCount">Week #:</Label>
                   <Input
                     type="number"
                     id="weekCount"
@@ -141,7 +135,49 @@ const EnrollmentsUpdateModal = ({ setDisplayUpdate, agentEnrollments }) => {
                 </InputRow>
 
                 <InputRow>
-                  <Label htmlFor="weekAmount">Week Amount:</Label>
+                  <Label htmlFor="monthAmount">Month $:</Label>
+                  <Input
+                    type="number"
+                    id="monthAmount"
+                    name="monthAmount"
+                    required
+                  />
+                </InputRow>
+              </BottomLeftCol>
+
+              <BottomRightCol>
+                <InputRow>
+                  <Label htmlFor="cancellationAmount">Cancellation $:</Label>
+                  <Input
+                    type="number"
+                    id="cancellationAmount"
+                    name="cancellationAmount"
+                    required
+                  />
+                </InputRow>
+
+                <InputRow>
+                  <Label htmlFor="dayAmount">Day $:</Label>
+                  <Input
+                    type="number"
+                    id="dayAmount"
+                    name="dayAmount"
+                    required
+                  />
+                </InputRow>
+
+                <InputRow>
+                  <Label htmlFor="pendingAmount">Pending $:</Label>
+                  <Input
+                    type="number"
+                    id="pendingAmount"
+                    name="pendingAmount"
+                    required
+                  />
+                </InputRow>
+
+                <InputRow>
+                  <Label htmlFor="weekAmount">Week $:</Label>
                   <Input
                     type="number"
                     id="weekAmount"
@@ -151,17 +187,7 @@ const EnrollmentsUpdateModal = ({ setDisplayUpdate, agentEnrollments }) => {
                 </InputRow>
 
                 <InputRow>
-                  <Label htmlFor="monthAmount">Month Amount:</Label>
-                  <Input
-                    type="number"
-                    id="monthAmount"
-                    name="monthAmount"
-                    required
-                  />
-                </InputRow>
-
-                <InputRow>
-                  <Label htmlFor="quarterAmount">Quarter Amount:</Label>
+                  <Label htmlFor="quarterAmount">Quarter $:</Label>
                   <Input
                     type="number"
                     id="quarterAmount"

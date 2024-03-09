@@ -16,7 +16,7 @@ align-items: center;
 
 export const ModalContent = styled.div`
 width: 655px;
-height: 325px;
+height: 370px;
 background-color: #555;
 border-radius: 5px;
 padding: 10px;
