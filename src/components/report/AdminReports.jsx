@@ -50,10 +50,10 @@ const AdminReports = () => {
   const [byAgent, setByAgent] = useState("all");
   const [agents, setAgents] = useState([]);
   const [startDate, setStartDate] = useState(
-    new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" })
+    new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" }),
   );
   const [endDate, setEndDate] = useState(
-    new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" })
+    new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" }),
   );
   const [isLoading, setIsLoading] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -126,7 +126,7 @@ const AdminReports = () => {
     try {
       const usersQuery = query(
         usersRef,
-        where("department", "==", byDepartment)
+        where("department", "==", byDepartment),
       );
       const userSnapshot = await getDocs(usersQuery);
       const userIds = userSnapshot.docs.map((doc) => doc.id);
@@ -300,7 +300,7 @@ const AdminReports = () => {
         },
         (err) => {
           console.error("Error fetching reports: ", err.message);
-        }
+        },
       );
 
       // Cleanup subscription on unmount

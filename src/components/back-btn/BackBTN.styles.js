@@ -10,13 +10,12 @@ export const MainContainer = styled.div`
     text-decoration: none;
     color: inherit;
   }
-
-`
+`;
 
 export const BTNText = styled.div`
-color: gray;
-font-weight: bold;
-`
+  color: gray;
+  font-weight: bold;
+`;
 
 export const BTNContainer = styled.div`
   width: 100px;
@@ -27,13 +26,13 @@ export const BTNContainer = styled.div`
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  transition: all .3s ease;
+  transition: all 0.3s ease;
 
-&:hover {
+  &:hover {
     border-color: darkgray;
 
     ${BTNText} {
       color: darkgray;
     }
   }
-`
+`;

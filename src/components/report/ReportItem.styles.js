@@ -1,10 +1,10 @@
-import styled from 'styled-components'
+import styled from "styled-components";
 
 export const MainContainer = styled.div`
   width: 100%;
   color: white;
   width: 100%;
-`
+`;
 
 export const TableRow = styled.tr`
   display: table;
@@ -13,7 +13,7 @@ export const TableRow = styled.tr`
   border-bottom: 2px solid purple;
 
   &.lead {
-    background-color: #3D3D3D;
+    background-color: #3d3d3d;
   }
 `;
 
@@ -23,21 +23,49 @@ export const TableData = styled.td`
   padding: 8px;
   line-height: 1.5;
 
-  &:nth-child(1) { width: 83px; }
-  &:nth-child(2) { width: 100px; }
-  &:nth-child(3) { width: 100px; }
-  &:nth-child(4) { width: 120px; }
-  &:nth-child(5) { width: 120px; }
-  &:nth-child(6) { width: 100px; }
-  &:nth-child(7) { width: 90px; }
-  &:nth-child(8) { width: 87px; }
+  &:nth-child(1) {
+    width: 83px;
+  }
+  &:nth-child(2) {
+    width: 100px;
+  }
+  &:nth-child(3) {
+    width: 100px;
+  }
+  &:nth-child(4) {
+    width: 120px;
+  }
+  &:nth-child(5) {
+    width: 120px;
+  }
+  &:nth-child(6) {
+    width: 100px;
+  }
+  &:nth-child(7) {
+    width: 90px;
+  }
+  &:nth-child(8) {
+    width: 87px;
+  }
 
-  &:nth-child(10) { width: 81px; }
-  &:nth-child(11) { width: 100px; }
-  &:nth-child(12) { width: 100px; }
-  &:nth-child(13) { width: 100px; }
-  &:nth-child(14) { width: 100px; }
-  &:nth-child(15) { width: 100px; }
+  &:nth-child(10) {
+    width: 81px;
+  }
+  &:nth-child(11) {
+    width: 100px;
+  }
+  &:nth-child(12) {
+    width: 100px;
+  }
+  &:nth-child(13) {
+    width: 100px;
+  }
+  &:nth-child(14) {
+    width: 100px;
+  }
+  &:nth-child(15) {
+    width: 100px;
+  }
 
   &:nth-last-child(1) {
     width: 100px;
@@ -47,7 +75,7 @@ export const TableData = styled.td`
   }
 
   &.under2Min {
-    background-color: #FFD700; // gold
+    background-color: #ffd700; // gold
     color: black;
   }
 
@@ -57,10 +85,9 @@ export const TableData = styled.td`
   }
 
   &.over1Hour {
-    background-color: #C0C0C0; // gray
+    background-color: #c0c0c0; // gray
     color: black;
   }
-
 `;
 
 export const Divider = styled.div`
@@ -68,7 +95,7 @@ export const Divider = styled.div`
   height: 1px;
   background-color: purple;
   margin: 10px auto;
-`
+`;
 
 export const Btn = styled.div`
   width: 100%;
@@ -89,4 +116,4 @@ export const Btn = styled.div`
     color: gray;
     border-color: purple;
   }
-`
+`;

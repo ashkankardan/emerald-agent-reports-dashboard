@@ -68,7 +68,7 @@ const Reports = () => {
       reportsRef,
       where("agentId", "==", user.id),
       where("createdAt", ">=", startTimestamp),
-      where("createdAt", "<=", endTimestamp)
+      where("createdAt", "<=", endTimestamp),
     );
 
     // Real-time subscription
@@ -83,7 +83,7 @@ const Reports = () => {
       },
       (err) => {
         console.error("Error fetching reports: ", err.message);
-      }
+      },
     );
 
     // Cleanup subscription on unmount

@@ -7,10 +7,10 @@ export const MainContainer = styled.div`
   justify-content: space-between;
   border: 1px solid purple;
   font-size: 20px;
-`
+`;
 
 export const StatItem = styled.div`
-span {
-  font-weight: bold;
-}
-`
+  span {
+    font-weight: bold;
+  }
+`;

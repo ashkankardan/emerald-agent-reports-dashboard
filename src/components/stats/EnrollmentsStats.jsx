@@ -52,7 +52,7 @@ const EnrollmentsStats = ({ enrollments }) => {
         acc.quarterAmount += Number(obj.quarterAmount);
         return acc;
       },
-      { ...tempTotal }
+      { ...tempTotal },
     );
 
     setTotal(totals);

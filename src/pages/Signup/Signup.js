@@ -1,21 +1,33 @@
-import React, { useState, useRef, useContext } from 'react';
-import { MainContainer } from './Signup.styles';
-import BackBTN from '../../components/back-btn/BackBTN';
-import { db, getDoc, doc, setDoc, usersRef, auth, serverTimestamp, createUserWithEmailAndPassword, signOut } from '../../config';
-import { UserContext } from '../../contexts/user-context';
+import React, { useState, useRef, useContext } from "react";
+import { MainContainer } from "./Signup.styles";
+import BackBTN from "../../components/back-btn/BackBTN";
+import {
+  db,
+  getDoc,
+  doc,
+  setDoc,
+  usersRef,
+  auth,
+  serverTimestamp,
+  createUserWithEmailAndPassword,
+  signOut,
+} from "../../config";
+import { UserContext } from "../../contexts/user-context";
 
 const Signup = () => {
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
   const { user, setUser } = useContext(UserContext);
   const formRef = useRef();
 
   const handleLogout = () => {
-    signOut(auth).then(() => {
-      setUser(null)
-    }).catch(err => {
-      console.log(err.message)
-    })
-  }
+    signOut(auth)
+      .then(() => {
+        setUser(null);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  };
 
   const fetchUserByUID = async (uid) => {
     try {
@@ -37,69 +49,76 @@ const Signup = () => {
     }
   };
 
-
   const handleSignup = (e) => {
     e.preventDefault();
 
-    setIsLoading(true)
+    setIsLoading(true);
     const formData = new FormData(formRef.current);
 
-    const email = formData.get('email')
-    const password = formData.get('password')
+    const email = formData.get("email");
+    const password = formData.get("password");
 
-    createUserWithEmailAndPassword(auth, email, password).then(cred => {
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((cred) => {
+        const userDocRef = doc(usersRef, cred.user.uid);
 
-      const userDocRef = doc(usersRef, cred.user.uid);
+        setDoc(userDocRef, {
+          id: cred.user.uid,
+          email: email,
+          fname: formData.get("fname"),
+          lname: formData.get("lname"),
+          role: "agent",
+          createdAt: serverTimestamp(),
+        })
+          .then(() => {
+            formRef.current.reset();
 
-      setDoc(userDocRef, {
-        "id": cred.user.uid,
-        "email": email,
-        "fname": formData.get('fname'),
-        "lname": formData.get('lname'),
-        "role": 'agent',
-        "createdAt": serverTimestamp()
-      }).then(() => {
-        formRef.current.reset();
+            const userDoc = fetchUserByUID(cred.user.uid);
 
-        const userDoc = fetchUserByUID(cred.user.uid)
-
-        setUser(userDoc)
-
-      }).catch(err => {
-        console.log('Error setting document: ', err.message);
+            setUser(userDoc);
+          })
+          .catch((err) => {
+            console.log("Error setting document: ", err.message);
+          });
+      })
+      .catch((err) => {
+        console.log("Error creating user: ", err.message);
       });
-    })
-      .catch(err => {
-        console.log('Error creating user: ', err.message);
-      });
 
-    setIsLoading(false)
+    setIsLoading(false);
   };
 
   return (
     <MainContainer>
       SignUp
-
-      {user ? <button onClick={handleLogout}>Logout</button> : <form ref={formRef} onSubmit={handleSignup}>
-        <label htmlFor="email">email:
-          <input type="text" name='email' id='email' />
-        </label>
-        <label htmlFor="password">password:
-          <input type="password" name='password' id='password' />
-        </label>
-        <label htmlFor="fname">First Name:
-          <input type="text" name='fname' />
-        </label>
-        <label htmlFor="lname">Last name:
-          <input type="text" name='lname' />
-        </label>
-        <button disabled={isLoading} type="submit">Add User</button>
-      </form>
-      }
+      {user ? (
+        <button onClick={handleLogout}>Logout</button>
+      ) : (
+        <form ref={formRef} onSubmit={handleSignup}>
+          <label htmlFor="email">
+            email:
+            <input type="text" name="email" id="email" />
+          </label>
+          <label htmlFor="password">
+            password:
+            <input type="password" name="password" id="password" />
+          </label>
+          <label htmlFor="fname">
+            First Name:
+            <input type="text" name="fname" />
+          </label>
+          <label htmlFor="lname">
+            Last name:
+            <input type="text" name="lname" />
+          </label>
+          <button disabled={isLoading} type="submit">
+            Add User
+          </button>
+        </form>
+      )}
       <BackBTN />
-
     </MainContainer>
   );
 };
 
-export default Signup
+export default Signup;

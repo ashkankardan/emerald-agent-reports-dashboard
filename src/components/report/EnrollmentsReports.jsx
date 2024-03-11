@@ -6,11 +6,7 @@ import {
   TableHead,
   TableRow,
 } from "./EnrollmentsReports.styles";
-import {
-  enrollmentsRef,
-  query,
-  onSnapshot,
-} from "../../config";
+import { enrollmentsRef, query, onSnapshot } from "../../config";
 import EnrollmentsReportItem from "./EnrollmentsReportItem";
 import EnrollmentsUpdateModal from "../modals/enrollments-update/EnrollmentsUpdateModal";
 import EnrollmentsStats from "../stats/EnrollmentsStats";
@@ -20,7 +16,7 @@ const EnrollmentsReports = ({ setReportView }) => {
   const [enrollments, setEnrollments] = useState([]);
   const [displayUpdateItem, setDisplayUpdate] = useState(false);
   const [itemToUpdate, setItemToUpdate] = useState(null);
-  const [sortedData, setSortedData] = useState([])
+  const [sortedData, setSortedData] = useState([]);
 
   useEffect(() => {
     let unsubscribe;
@@ -43,7 +39,7 @@ const EnrollmentsReports = ({ setReportView }) => {
         },
         (err) => {
           console.error("Error fetching reports: ", err.message);
-        }
+        },
       );
 
       // Cleanup subscription on unmount
@@ -60,12 +56,12 @@ const EnrollmentsReports = ({ setReportView }) => {
   }, []);
 
   useEffect(() => {
-    if (!enrollments) return
+    if (!enrollments) return;
 
-    const sortedData = sortEnrollments(enrollments)
+    const sortedData = sortEnrollments(enrollments);
 
-    setSortedData(sortedData)
-  }, [enrollments])
+    setSortedData(sortedData);
+  }, [enrollments]);
 
   return (
     <MainContainer>
@@ -73,8 +69,12 @@ const EnrollmentsReports = ({ setReportView }) => {
         <ReportTable>
           <thead>
             <TableRow>
-              <TableHead className="cancellationCount">Cancellation $</TableHead>
-              <TableHead className="cancellationAmount">Cancellation #</TableHead>
+              <TableHead className="cancellationCount">
+                Cancellation $
+              </TableHead>
+              <TableHead className="cancellationAmount">
+                Cancellation #
+              </TableHead>
               <TableHead>Agent</TableHead>
               <TableHead>Day #</TableHead>
               <TableHead className="dayAmount">Day $</TableHead>
@@ -88,16 +88,17 @@ const EnrollmentsReports = ({ setReportView }) => {
             </TableRow>
           </thead>
           <tbody>
-            {sortedData && sortedData.map((agentEnrollments) => {
-              return (
-                <EnrollmentsReportItem
-                  key={agentEnrollments.id}
-                  agentEnrollments={agentEnrollments}
-                  setItemToUpdate={setItemToUpdate}
-                  setDisplayUpdate={setDisplayUpdate}
-                />
-              );
-            })}
+            {sortedData &&
+              sortedData.map((agentEnrollments) => {
+                return (
+                  <EnrollmentsReportItem
+                    key={agentEnrollments.id}
+                    agentEnrollments={agentEnrollments}
+                    setItemToUpdate={setItemToUpdate}
+                    setDisplayUpdate={setDisplayUpdate}
+                  />
+                );
+              })}
             <EnrollmentsStats enrollments={enrollments} />
           </tbody>
         </ReportTable>

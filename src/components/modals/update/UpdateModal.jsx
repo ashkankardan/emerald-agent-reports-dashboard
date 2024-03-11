@@ -38,7 +38,7 @@ const UpdateModal = ({ setDisplayUpdate, report }) => {
   const [tempAccessPinCode, setTempAccessPinCode] = useState(null);
   const [ssn, setSsn] = useState("");
   const [dob, setDob] = useState(
-    new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" })
+    new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" }),
   );
   const [verificationModal, setVerificationModal] = useState("none");
 
@@ -240,7 +240,7 @@ const UpdateModal = ({ setDisplayUpdate, report }) => {
         emailData,
         {
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
 
       console.log("Email sent successfully");
