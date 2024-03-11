@@ -1,14 +1,11 @@
-import React, { useState, useEffect, useContext } from "react";
-import { MainContainer } from "./Admin.styles";
-import { signOut, auth } from "../../config";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useContext } from 'react';
+import { MainContainer } from './Enrollments.styles';
 import { UserContext } from "../../contexts/user-context";
-import AdminReports from "../../components/report/AdminReports.jsx";
-import SuperAdmin from "../../components/super-admin/SuperAdmin";
+import { useNavigate } from "react-router-dom";
+import EnrollmentsReports from '../../components/report/EnrollmentsReports';
+import { signOut, auth } from "../../config";
 
-const Admin = ({ reportView }) => {
-  const [adminView, setAdminView] = useState("admin");
-
+const Enrollments = () => {
   const { user, setUser } = useContext(UserContext);
 
   const navigate = useNavigate();
@@ -48,12 +45,9 @@ const Admin = ({ reportView }) => {
 
   return (
     <MainContainer>
-      {adminView === "admin" && <AdminReports />}
-      {adminView === "superAdmin" && <SuperAdmin />}
-
-      {/* <BackBTN /> */}
+      <EnrollmentsReports />
     </MainContainer>
   );
 };
 
-export default Admin;
+export default Enrollments;
