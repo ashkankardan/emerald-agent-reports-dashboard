@@ -30,6 +30,11 @@ export const TableData = styled.td`
     }
   }
 
+  &.agentName {
+    background-color: gold;
+    color: black;
+  }
+
   &.counts {
     background-color: gray;
     color: black;
