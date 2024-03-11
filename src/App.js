@@ -12,6 +12,7 @@ import axios from "axios";
 import LogoMotion from "./components/logo-motion/LogoMotion";
 import ViewProvider from "./contexts/view-context";
 import Enrollments from "./pages/enrollments/Enrollments";
+import Progress from "./pages/progress/Progress";
 
 function App() {
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -61,6 +62,7 @@ function App() {
                   <Route path="/agent" element={<Agent />} />
                   <Route path="/admin" element={<Admin />} />
                   <Route path="/enrollments" element={<Enrollments />} />
+                  <Route path="/progress" element={<Progress />} />
                 </>
               ) : (
                 <Route path="*" element={<LogoMotion />} />

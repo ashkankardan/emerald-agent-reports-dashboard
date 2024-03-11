@@ -43,3 +43,16 @@ export const sortEnrollments = (enrollments) => {
 
   return sortedData;
 };
+
+export const sortProgress = (enrollments) => {
+  const sortedData = [...enrollments].sort(
+    (a, b) => b["monthAmount"] - a["monthAmount"],
+  );
+  return sortedData;
+};
+
+export const calculateProgressBarLength = (current, goal) => {
+  const lenPerc = (current * 100) / goal;
+  const roundedLenPerc = parseFloat(lenPerc.toFixed(2));
+  return roundedLenPerc;
+};

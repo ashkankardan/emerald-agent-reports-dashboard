@@ -20,7 +20,7 @@ const EnrollmentsReportItem = ({
       <TableData className="counts">
         {agentEnrollments.cancellationCount}
       </TableData>
-      <TableData>
+      <TableData className="agentName">
         {agentEnrollments.fname} {agentEnrollments.lname}
       </TableData>
       <TableData className="counts">{agentEnrollments.dayCount}</TableData>

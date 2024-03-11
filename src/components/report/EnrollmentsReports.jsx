@@ -75,7 +75,7 @@ const EnrollmentsReports = ({ setReportView }) => {
               <TableHead className="cancellationAmount">
                 Cancellation #
               </TableHead>
-              <TableHead>Agent</TableHead>
+              <TableHead className="agentName">Agent</TableHead>
               <TableHead>Day #</TableHead>
               <TableHead className="dayAmount">Day $</TableHead>
               <TableHead>Pending #</TableHead>

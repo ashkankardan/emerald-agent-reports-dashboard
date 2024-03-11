@@ -1,11 +1,11 @@
 import React, { useEffect, useContext } from "react";
-import { MainContainer } from "./Enrollments.styles";
+import { MainContainer } from "./Progress.styles";
 import { UserContext } from "../../contexts/user-context";
 import { useNavigate } from "react-router-dom";
-import EnrollmentsReports from "../../components/report/EnrollmentsReports";
+import ProgressReport from "../../components/report/progress/ProgressReport";
 import { signOut, auth } from "../../config";
 
-const Enrollments = () => {
+const Progress = () => {
   const { user, setUser } = useContext(UserContext);
 
   const navigate = useNavigate();
@@ -45,9 +45,9 @@ const Enrollments = () => {
 
   return (
     <MainContainer>
-      <EnrollmentsReports />
+      <ProgressReport />
     </MainContainer>
   );
 };
 
-export default Enrollments;
+export default Progress;

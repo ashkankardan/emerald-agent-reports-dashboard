@@ -79,6 +79,10 @@ export const TableHead = styled.th`
     width: 120px;
   }
 
+  &.agentName {
+    background-color: teal;
+  }
+
   &.cancellationCount {
     background-color: red;
     color: black;
