@@ -8,11 +8,11 @@ export const MainContainer = styled.div`
   padding: 20px;
   padding-top: 10px;
   box-sizing: border-box;
-`
+`;
 
 export const ReportMainContent = styled.div`
-width: 100%;
-`
+  width: 100%;
+`;
 
 export const ReportTable = styled.table`
   width: 100%;
@@ -26,7 +26,7 @@ export const ReportTable = styled.table`
     table-layout: fixed;
 
     th:last-child::after {
-      content: '';
+      content: "";
       display: block;
       width: 15px; // Approximate scrollbar width
       position: absolute;
@@ -42,23 +42,24 @@ export const ReportTable = styled.table`
     /* overflow-y: scroll; */
     height: calc(100vh - 350px);
 
-// Scrollbar track
-&::-webkit-scrollbar {
-    width: 15px; // Width of the scrollbar
+    // Scrollbar track
+    &::-webkit-scrollbar {
+      width: 15px; // Width of the scrollbar
+    }
+
+    // Scrollbar handle
+    &::-webkit-scrollbar-thumb {
+      background: purple; // Color of the scrollbar thumb
+    }
+
+    // Scrollbar track
+    &::-webkit-scrollbar-track {
+      background: purple; // Color of the scrollbar track
+    }
   }
 
-  // Scrollbar handle
-  &::-webkit-scrollbar-thumb {
-    background: purple; // Color of the scrollbar thumb
-  }
-
-  // Scrollbar track
-  &::-webkit-scrollbar-track {
-    background: purple; // Color of the scrollbar track
-  }
-  }
-
-  th, td {
+  th,
+  td {
     border: 1px solid purple;
     text-align: left;
     padding: 8px;
@@ -67,7 +68,6 @@ export const ReportTable = styled.table`
   }
 `;
 
-
 export const TableHead = styled.th`
   border: 1px solid purple;
   text-align: left;
@@ -75,7 +75,9 @@ export const TableHead = styled.th`
   width: 110px;
   font-size: 14px;
 
-  &:nth-child(3) { width: 120px; }
+  &:nth-child(3) {
+    width: 120px;
+  }
 
   &.cancellationCount {
     background-color: red;
@@ -111,10 +113,7 @@ export const TableHead = styled.th`
     background-color: teal;
     color: black;
   }
-
-
-
-`
+`;
 
 export const TableRow = styled.tr`
   display: table;
@@ -128,4 +127,4 @@ export const Divider = styled.div`
   height: 1px;
   background-color: purple;
   margin: 10px auto;
-`
+`;

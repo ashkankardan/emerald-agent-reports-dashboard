@@ -1,10 +1,10 @@
-import styled from 'styled-components'
+import styled from "styled-components";
 
 export const MainContainer = styled.div`
   width: 100%;
   height: 100vh;
   color: white;
-`
+`;
 
 export const MainContent = styled.div`
   width: 100%;
@@ -13,11 +13,11 @@ export const MainContent = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-`
+`;
 
 export const InputRow = styled.div`
   margin-bottom: 10px;
-`
+`;
 
 export const Label = styled.label`
   width: 140px;
@@ -25,7 +25,7 @@ export const Label = styled.label`
   font-weight: bold;
   padding-left: 2px;
   margin-bottom: 5px;
-`
+`;
 
 export const Input = styled.input`
   width: 100%;
@@ -35,14 +35,14 @@ export const Input = styled.input`
   padding: 0 5px;
   color: purple;
   border-color: purple;
-`
+`;
 
 export const BtnContainer = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
   margin-top: 15px;
-`
+`;
 
 export const Btn = styled.button`
   width: 100%;
@@ -61,9 +61,9 @@ export const Btn = styled.button`
     border-color: purple;
     background-color: black;
   }
-`
+`;
 
 export const Logo = styled.img`
   width: 300px;
   margin-bottom: 50px;
-`
+`;

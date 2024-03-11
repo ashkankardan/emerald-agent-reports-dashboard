@@ -7,7 +7,7 @@ export const TableRow = styled.tr`
   border-bottom: 2px solid purple;
 
   &:hover {
-    background-color: #3D3D3D;
+    background-color: #3d3d3d;
   }
 `;
 
@@ -20,7 +20,9 @@ export const TableData = styled.td`
   font-size: 14px;
   font-weight: bold;
 
-  &:nth-child(3) { width: 120px; }
+  &:nth-child(3) {
+    width: 120px;
+  }
 
   &:nth-last-child(1) {
     button {
@@ -52,4 +54,4 @@ export const Btn = styled.div`
     color: purple;
     border-color: purple;
   }
-`
+`;

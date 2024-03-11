@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from "styled-components";
 
 export const MainContainer = styled.div`
   width: 100%;
@@ -11,15 +11,15 @@ export const MainContainer = styled.div`
 `;
 
 export const ReportMainContent = styled.div`
-width: 100%;
-`
+  width: 100%;
+`;
 
 export const SectionNavContainer = styled.div`
   width: 100%;
   display: flex;
   justify-content: right;
   margin-bottom: 15px;
-`
+`;
 
 export const Btn = styled.div`
   width: 80px;
@@ -37,9 +37,7 @@ export const Btn = styled.div`
     color: purple;
     border-color: purple;
   }
-`
-
-
+`;
 
 export const ReportTable = styled.table`
   width: 100%;
@@ -52,7 +50,7 @@ export const ReportTable = styled.table`
     table-layout: fixed;
 
     th:last-child::after {
-      content: '';
+      content: "";
       display: block;
       width: 15px; // Approximate scrollbar width
       position: absolute;
@@ -68,25 +66,24 @@ export const ReportTable = styled.table`
     overflow-y: scroll;
     height: calc(100vh - 285px);
 
+    // Scrollbar track
+    &::-webkit-scrollbar {
+      width: 15px; // Width of the scrollbar
+    }
 
-// Scrollbar track
-&::-webkit-scrollbar {
-    width: 15px; // Width of the scrollbar
+    // Scrollbar handle
+    &::-webkit-scrollbar-thumb {
+      background: purple; // Color of the scrollbar thumb
+    }
+
+    // Scrollbar track
+    &::-webkit-scrollbar-track {
+      background: gray; // Color of the scrollbar track
+    }
   }
 
-  // Scrollbar handle
-  &::-webkit-scrollbar-thumb {
-    background: purple; // Color of the scrollbar thumb
-  }
-
-  // Scrollbar track
-  &::-webkit-scrollbar-track {
-    background: gray; // Color of the scrollbar track
-  }
-
-  }
-
-  th, td {
+  th,
+  td {
     border: 1px solid purple;
     text-align: left;
     padding: 8px;
@@ -95,22 +92,37 @@ export const ReportTable = styled.table`
   }
 `;
 
-
 export const TableHead = styled.th`
   border: 1px solid purple;
   text-align: left;
   padding: 8px;
 
-  &:nth-child(1) { width: 60px; }
-  &:nth-child(2) { width: 120px; }
-  &:nth-child(3) { width: 120px; }
-  &:nth-child(4) { width: 100px; }
-  &:nth-child(5) { width: 90px; }
-  &:nth-child(7) { width: 87px; }
-  &:nth-child(8) { width: 100px; }
+  &:nth-child(1) {
+    width: 60px;
+  }
+  &:nth-child(2) {
+    width: 120px;
+  }
+  &:nth-child(3) {
+    width: 120px;
+  }
+  &:nth-child(4) {
+    width: 100px;
+  }
+  &:nth-child(5) {
+    width: 90px;
+  }
+  &:nth-child(7) {
+    width: 87px;
+  }
+  &:nth-child(8) {
+    width: 100px;
+  }
 
-  &:nth-last-child(1) { width: 100px; }
-`
+  &:nth-last-child(1) {
+    width: 100px;
+  }
+`;
 
 export const TableRow = styled.tr`
   display: table;
@@ -123,4 +135,4 @@ export const Divider = styled.div`
   height: 1px;
   background-color: purple;
   margin: 10px auto;
-`
+`;

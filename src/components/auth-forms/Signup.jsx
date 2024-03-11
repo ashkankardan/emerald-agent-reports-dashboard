@@ -1,8 +1,8 @@
-import React from 'react'
-import { MainContainer } from './Login.styles'
+import React from "react";
+import { MainContainer } from "./Login.styles";
 
 const Signup = () => {
-  return <MainContainer>Signup form</MainContainer>
-}
+  return <MainContainer>Signup form</MainContainer>;
+};
 
-export default Signup
+export default Signup;

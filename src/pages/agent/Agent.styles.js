@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const MainContainer = styled.div`
-width: 100%;
-color: white;
-background-color: black;
-`
+  width: 100%;
+  color: white;
+  background-color: black;
+`;

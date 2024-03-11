@@ -1,27 +1,27 @@
 import styled from "styled-components";
 
 export const MainContainer = styled.div`
-width: 100%;
-`
+  width: 100%;
+`;
 
 export const Form = styled.form`
-width: 100%;
-`
+  width: 100%;
+`;
 
 export const InputRow = styled.div`
-width: 100%;
-margin-bottom: 10px;
-display: flex;
-flex-direction: column;
-`
+  width: 100%;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+`;
 
 export const Label = styled.label`
-width: 100%;
-display: inline-block;
-font-weight: bold;
-margin-bottom: 10px;
-text-align: center;
-`
+  width: 100%;
+  display: inline-block;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+`;
 
 export const Input = styled.input`
   width: 100%;
@@ -34,13 +34,13 @@ export const Input = styled.input`
   height: 30px;
   padding: 0 5px;
   font-size: 16px;
-`
+`;
 
 export const BtnContainer = styled.div`
-width: 100%;
-display: flex;
-justify-content: center;
-`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+`;
 
 export const Btn = styled.button`
   width: 100%;
@@ -59,4 +59,4 @@ export const Btn = styled.button`
     border-color: purple;
     background-color: black;
   }
-`
+`;

@@ -7,7 +7,7 @@ export const TableRow = styled.tr`
   border-bottom: 2px solid purple;
 
   &.lead {
-    background-color: #3D3D3D;
+    background-color: #3d3d3d;
   }
 `;
 
@@ -20,7 +20,9 @@ export const TableData = styled.td`
   font-weight: bold;
   font-size: 14px;
 
-  &:nth-child(3) { width: 120px; }
+  &:nth-child(3) {
+    width: 120px;
+  }
 
   &:nth-last-child(1) {
     button {
@@ -52,7 +54,7 @@ export const Btn = styled.div`
     color: purple;
     border-color: purple;
   }
-`
+`;
 
 const fadeInOutAnimation = keyframes`
   0%, 100% {
@@ -67,11 +69,11 @@ export const LogoContainer = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
-`
+`;
 
 export const Logo = styled.img`
   border-radius: 50%;
   height: 40px;
   margin: auto;
   animation: ${fadeInOutAnimation} 3s ease-in infinite;
-`
+`;
