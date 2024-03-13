@@ -8,30 +8,11 @@ export const MainContainer = styled.div`
   align-items: center;
 `;
 
-export const WeeklyBar = styled.div`
-  width: ${(props) => props.barWidth || 1}%;
-  height: 100%;
-  background-color: red;
-
-  &.green {
-    background-color: green;
-  }
-
-  &.yellow {
-    background-color: yellow;
-  }
-
-  &.orange {
-    background-color: orange;
-  }
-
-  &.red {
-    background-color: red;
-  }
-
-  &.blue {
-    background-color: blue;
-  }
+export const EndOverBar = styled.div`
+  width: ${(props) => props.barWidth}%;
+  height: 18px;
+  background-color: blue;
+  margin-right: 10px;
 `;
 
 export const BarText = styled.div`
@@ -46,6 +27,7 @@ export const BarText = styled.div`
 export const AvatarContainer = styled.div`
   width: 130px;
   height: 130px;
+  transform: translateX(-10px);
   display: flex;
   justify-content: left;
   align-items: center;

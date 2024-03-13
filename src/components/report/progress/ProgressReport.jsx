@@ -5,10 +5,14 @@ import {
   Btn,
   MainContent,
   Goal,
+  Img,
+  ProgressItemsContainer,
+  VerticleDivider,
 } from "./ProgressReport.styles";
 import { enrollmentsRef, query, onSnapshot, goalsRef } from "../../../config";
 import { formatPriceAmount, sortProgress } from "../../../helpers";
 import ProgressReportItem from "./ProgressReportItem";
+import FlagImg from "../../../assets/img/flag.png";
 
 const ProgressReport = () => {
   const [enrollments, setEnrollments] = useState([]);
@@ -16,6 +20,7 @@ const ProgressReport = () => {
   const [currentGoals, setCurrentGoals] = useState([]);
   const [monthGoal, setMonthGoal] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [overGoalMax, setOverGoalMax] = useState(0);
 
   // const handleUpdateGoal = (e) => {
   //   e.preventDefault()
@@ -123,8 +128,22 @@ const ProgressReport = () => {
   }, [enrollments]);
 
   useEffect(() => {
-    console.log("sorted Progress: ", sortedData);
-  }, [sortedData]);
+    if (!monthGoal || monthGoal < 1 || sortedData.length < 1) return;
+
+    const maxMonthAmount = Math.max(
+      ...sortedData.map((agent) => agent["monthAmount"]),
+    );
+    if (maxMonthAmount > monthGoal) {
+      const overDifference = maxMonthAmount - monthGoal;
+      setOverGoalMax(overDifference);
+    } else {
+      setOverGoalMax(0);
+    }
+  }, [sortedData, monthGoal]);
+
+  useEffect(() => {
+    console.log("overGoalMax: ", overGoalMax);
+  }, [overGoalMax]);
 
   return (
     <MainContainer>
@@ -134,17 +153,23 @@ const ProgressReport = () => {
       </SectionNavContainer>
 
       <MainContent>
-        {sortedData &&
-          sortedData.map((agentEnrollments, index) => {
-            return (
-              <ProgressReportItem
-                key={agentEnrollments.id}
-                agentEnrollments={agentEnrollments}
-                goal={monthGoal}
-                index={index}
-              />
-            );
-          })}
+        <VerticleDivider>
+          <Img src={FlagImg} />
+        </VerticleDivider>
+        <ProgressItemsContainer>
+          {sortedData &&
+            sortedData.map((agentEnrollments, index) => {
+              return (
+                <ProgressReportItem
+                  key={agentEnrollments.id}
+                  agentEnrollments={agentEnrollments}
+                  goal={monthGoal}
+                  index={index}
+                  overGoalMax={overGoalMax}
+                />
+              );
+            })}
+        </ProgressItemsContainer>
       </MainContent>
     </MainContainer>
   );

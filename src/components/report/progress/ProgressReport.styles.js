@@ -9,6 +9,26 @@ export const MainContainer = styled.div`
 
 export const MainContent = styled.div`
   width: 100%;
+  display: flex;
+  justify-content: left;
+  position: relative;
+`;
+
+export const VerticleDivider = styled.div`
+  position: absolute;
+  width: 3px;
+  height: 380px;
+  background-color: teal;
+  left: 1080px;
+`;
+
+export const Img = styled.img`
+  width: 70px;
+  transform: translate(-64px, -75px);
+`;
+
+export const ProgressItemsContainer = styled.div`
+  width: 100%;
 `;
 
 export const SectionNavContainer = styled.div`
