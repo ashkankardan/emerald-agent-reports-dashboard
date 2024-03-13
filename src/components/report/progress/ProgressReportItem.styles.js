@@ -16,5 +16,16 @@ export const AgentName = styled.div`
 `;
 
 export const ProgressBarContainer = styled.div`
-  width: 100%;
+  width: 900px;
+`;
+
+export const ProgressBarContainerEnd = styled.div`
+  width: 300px;
+`;
+
+export const VerticleDivider = styled.div`
+  height: 100%;
+  width: 5px;
+  background-color: red;
+  transform: translateX(-10px);
 `;

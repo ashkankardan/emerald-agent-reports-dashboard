@@ -3,9 +3,9 @@ import {
   AvatarContainer,
   AvatarImg,
   BarText,
+  EndOverBar,
   MainContainer,
-  WeeklyBar,
-} from "./Bar.styles";
+} from "./OverBar.styles";
 import {
   calculateProgressBarLength,
   formatPriceAmount,
@@ -15,32 +15,15 @@ import HorseImg from "../../../../assets/img/horse.png";
 import BicycleImg from "../../../../assets/img/bicycle.png";
 import TurtleImg from "../../../../assets/img/turtle.png";
 
-const Bar = ({ monthAmount, goal, index }) => {
-  const [color, setColor] = useState("");
+const OverBar = ({ overGoalMax, overGoal, index }) => {
   const [barWidth, setBarWidth] = useState(0);
   const [placement, setPlacement] = useState("fourth");
 
   useEffect(() => {
-    if (!barWidth) return;
-
-    if (barWidth >= 76) {
-      return setColor("green");
-    } else if (barWidth >= 51) {
-      return setColor("yellow");
-    } else if (barWidth > 26) {
-      return setColor("orange");
-    } else if (barWidth === 0) {
-      setColor("red");
-    } else {
-      setColor("red");
-    }
-  }, [barWidth]);
-
-  useEffect(() => {
-    if (!monthAmount || !goal) return;
-    const LenPerc = calculateProgressBarLength(monthAmount, goal);
+    if (!overGoalMax || !overGoal) return;
+    const LenPerc = calculateProgressBarLength(overGoal, overGoalMax);
     setBarWidth(LenPerc);
-  }, [monthAmount, goal]);
+  }, [overGoalMax, overGoal]);
 
   useEffect(() => {
     if (index === 0) {
@@ -56,12 +39,14 @@ const Bar = ({ monthAmount, goal, index }) => {
     }
   }, [index]);
 
+  useEffect(() => {
+    console.log("barWidth: ", barWidth);
+  }, [barWidth]);
+
   return (
     <MainContainer>
-      <WeeklyBar className={color} barWidth={barWidth}>
-        <BarText>{`$${formatPriceAmount(monthAmount)}`}</BarText>
-      </WeeklyBar>
-      {barWidth <= 100 && (
+      <EndOverBar barWidth={barWidth} />
+      {barWidth > 0 && (
         <AvatarContainer>
           {placement === "first" && (
             <AvatarImg className="first" src={CarImg} />
@@ -81,4 +66,4 @@ const Bar = ({ monthAmount, goal, index }) => {
   );
 };
 
-export default Bar;
+export default OverBar;
