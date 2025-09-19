@@ -1,71 +1,259 @@
-# Getting Started with Create React App
+# Emerald Agent Reports Dashboard
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A role‑based React + Firebase application for collecting and managing agent reports and enrollments, with admin tooling for review, search, exports, and verification. The project also includes Firebase Cloud Functions for IP allow‑listing, Twilio notifications, temporary document links, and scheduled Firestore backups.
 
-## Available Scripts
+> **Stack**: React (CRA), Firebase Hosting, Cloud Functions (Node 18), Firestore, Algolia Search, EmailJS, XLSX exports, styled‑components.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## Table of Contents
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+* [Features](#features)
+* [Screens & Roles](#screens--roles)
+* [Architecture](#architecture)
+* [Directory Structure](#directory-structure)
+* [Getting Started](#getting-started)
+* [Environment Variables](#environment-variables)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+  * [Frontend (`REACT_APP_*`)](#frontend-react_app_)
+  * [Cloud Functions runtime config](#cloud-functions-runtime-config)
+* [Firebase Setup](#firebase-setup)
+* [Development Scripts](#development-scripts)
+* [Cloud Functions](#cloud-functions)
+* [Data Model (Firestore)](#data-model-firestore)
+* [Algolia & EmailJS Configuration](#algolia--emailjs-configuration)
+* [Exporting & Reports](#exporting--reports)
+* [Deployment](#deployment)
+* [Security Notes](#security-notes)
+* [Roadmap / Ideas](#roadmap--ideas)
+* [License](#license)
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Features
 
-### `npm run build`
+* **Role‑based access**: `agent`, `admin`, `super-admin` workflows and views.
+* **Agent reporting**: dynamic forms to submit daily/weekly reports and enrollment activity.
+* **Admin console**: review & update reports, inline edits, bulk actions, and status flows.
+* **Search & filter**: Algolia‑powered search by name and other fields in the admin view.
+* **Exports**: one‑click export to **XLSX** (via `xlsx` + `file-saver`).
+* **Verification links**: generate temporary access links and deliver via Email/SMS.
+* **IP allow‑listing**: block/allow app access by IP (checked at startup via `REACT_APP_CHECK_IP_URL`).
+* **Scheduled backups**: daily Firestore export to GCS via a scheduled Cloud Function.
+* **Twilio integration**: functions to receive call details / agent assignment and to send notifications.
+* **Styled UI**: `styled-components`‑based design system with modular, reusable components.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Screens & Roles
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+* **Login / Signup** (`/login`, `/signup`)
+* **Agent dashboard** (`/agent`): create/update your own reports and enrollments, see progress.
+* **Admin dashboard** (`/admin`): manage all reports, run searches, exports, and verifications.
+* **Enrollments view** (`/enrollments`): enrollment metrics and breakdowns.
+* **Progress view** (`/progress`): aggregate statistics (day/week) with helper hooks.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+> Routing is handled via **react-router-dom** (v6).
 
-### `npm run eject`
+## Architecture
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```
+React (CRA) SPA
+  ├─ Auth / Role context (localStorage persistence)
+  ├─ Feature modules: Reports, Enrollments, Progress, Admin tools
+  ├─ Integrations: Algolia (search), EmailJS (email send), XLSX (export)
+  └─ Axios check → REACT_APP_CHECK_IP_URL (IP allow‑listing)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Firebase
+  ├─ Hosting (serves CRA build)
+  ├─ Firestore (users, reports, enrollments, tempLinks, etc.)
+  └─ Cloud Functions (Node 18)
+      ├─ receiveCallDetails (https)
+      ├─ receiveAssignedAgent (https)
+      ├─ checkIP (https) — used by the app to gate access
+      ├─ searchByName (https) — supports admin search
+      ├─ generateTempURL (https) / updateAndDeleteDocTempURL (https)
+      ├─ checkPinAndFetchDocument (https)
+      ├─ addPhoneSuffixToReports (https)
+      ├─ deleteExpiredDocs (pubsub, every 3 minutes)
+      └─ scheduledFirestoreExport (pubsub, daily)
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Directory Structure
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```
+.
+├─ functions/                 # Firebase Cloud Functions (Node 18)
+│   ├─ index.js               # All exported functions
+│   ├─ package.json
+│   └─ ...
+├─ public/                    # CRA public assets
+├─ src/
+│   ├─ assets/img/            # Logos & images
+│   ├─ components/            # UI components (reports, modals, stats, etc.)
+│   ├─ contexts/              # user-context, view-context
+│   ├─ helpers/               # formatting & calculations
+│   ├─ hooks/                 # custom hooks (enrolled amount, logout, etc.)
+│   ├─ layouts/               # wrappers and layout styles
+│   ├─ pages/                 # route pages (Agent, Admin, Enrollments, Progress, ...)
+│   ├─ App.js                 # routes
+│   ├─ index.js               # CRA entry point
+│   └─ index.css
+├─ firebase.json              # Hosting + Functions config
+├─ .firebaserc                # Default project alias
+├─ package.json               # CRA app pkg
+└─ README.md                  # (this file)
+```
 
-## Learn More
+## Getting Started
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+1. **Install** (node ≥ 18 recommended for parity with Functions):
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+   ```bash
+   npm install
+   cd functions && npm install && cd ..
+   ```
+2. **Set environment variables** (see next section) for both frontend and functions.
+3. **Run the app**:
 
-### Code Splitting
+   ```bash
+   npm start
+   ```
+4. **Emulate / serve Functions** (optional):
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+   ```bash
+   cd functions
+   npm run serve
+   ```
 
-### Analyzing the Bundle Size
+## Environment Variables
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Frontend (`REACT_APP_*`)
 
-### Making a Progressive Web App
+Create a `.env` at the project root:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```
+REACT_APP_CHECK_IP_URL=<https endpoint of checkIP function>
+REACT_APP_SECURED_URL=<base url for secured endpoints if used>
 
-### Advanced Configuration
+# Algolia
+REACT_APP_ALGOLIA_APP_ID=<your app id>
+REACT_APP_ALGOLIA_API_KEY=<search‑only api key>
+REACT_APP_ALGOLIA_INDEX=<index name>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+# EmailJS
+REACT_APP_EMAILJS_SERVICE_ID=<service id>
+REACT_APP_EMAILJS_TEMPLATE_ID=<template id>
+REACT_APP_EMAILJS_PUBLIC_KEY=<public key>
+```
 
-### Deployment
+> CRA only exposes variables prefixed with `REACT_APP_` to the browser.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### Cloud Functions runtime config
 
-### `npm run build` fails to minify
+Set with `firebase functions:config:set` and **deploy**:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-# emerald-agent-reports
+```bash
+# Twilio (used by functions)
+firebase functions:config:set twilio.sid="<sid>" twilio.token="<token>"
+
+# Project id used by scheduled backups (if referenced as functions.config().project.id)
+firebase functions:config:set project.id="<your-firebase-project-id>"
+
+# (Optional) other config keys your functions rely on
+# e.g., allowed IP/cidr, bucket, auth pins, etc.
+```
+
+Read configs with `functions.config()` in code. To inspect:
+
+```bash
+firebase functions:config:get
+```
+
+## Firebase Setup
+
+1. **Create a Firebase project** and enable:
+
+   * **Firestore** (Native mode)
+   * **Hosting**
+   * **Cloud Functions** (Node 18)
+2. **Initialize** (already included): `.firebaserc`, `firebase.json`.
+3. **Set Functions config** (above) and deploy:
+
+   ```bash
+   npm run build
+   firebase deploy --only hosting,functions
+   ```
+4. **(Optional) Schedules**: Pub/Sub schedules (e.g., `scheduledFirestoreExport`) are created on first deploy.
+
+## Development Scripts
+
+```json
+{
+  "start": "react-scripts start",
+  "build": "react-scripts build",
+  "test": "react-scripts test",
+  "eject": "react-scripts eject"
+}
+```
+
+Functions scripts:
+
+```json
+{
+  "serve": "firebase emulators:start --only functions",
+  "deploy": "firebase deploy --only functions",
+  "logs": "firebase functions:log"
+}
+```
+
+## Cloud Functions
+
+> Located in `functions/index.js` (Node 18). Key exports (names inferred from code):
+
+* **`checkIP`** *(HTTPS)*: validates requester IP/allow‑list. The frontend calls this via `REACT_APP_CHECK_IP_URL` during app initialization to gate access.
+* **`receiveCallDetails`** *(HTTPS)*: ingests call metadata (e.g., from a dialer/integration); looks up matching user by `viciUsername` and stores/updates related records.
+* **`receiveAssignedAgent`** *(HTTPS)*: assigns/updates the agent for a lead/call.
+* **`searchByName`** *(HTTPS)*: search utility for admin (complements client‑side Algolia usage).
+* **`generateTempURL`** *(HTTPS)*: creates a one‑time/expiring document URL (e.g., for verification), persists in Firestore.
+* **`checkPinAndFetchDocument`** *(HTTPS)*: validates a PIN and returns the associated document payload.
+* **`updateAndDeleteDocTempURL`** *(HTTPS)*: housekeeping for temporary links (update status, then delete).
+* **`addPhoneSuffixToReports`** *(HTTPS)*: mass‑update utility to normalize phone suffix data in report docs.
+* **`deleteExpiredDocs`** *(Scheduled: every 3 minutes)*: removes expired temporary docs/links.
+* **`scheduledFirestoreExport`** *(Scheduled: daily)*: exports Firestore to the default GCS bucket using the Admin SDK / Firestore Admin client. Requires the project/bucket to be correctly configured.
+
+> **Twilio**: The Functions code initializes `twilio` using `functions.config().twilio.{sid,token}`. Ensure the credentials are set. If SMS/voice webhooks are used, map them to the appropriate HTTPS function URLs.
+
+## Data Model (Firestore)
+
+> Collections are inferred from usage in code; confirm/adjust to match your production data.
+
+* `users` — user records including `role` (`agent` | `admin` | `super-admin`), `viciUsername`, contact info.
+* `reports` — agent report docs; includes daily/weekly stats, amounts, status fields; used by AdminReports.
+* `enrollments` — enrollment activity summarized per user/date with derived fields like `dayCount`, `dayAmount`, `weekAmount`.
+* `tempLinks` / `verifications` — temporary link/PIN records with `expiresAt` timestamps.
+
+Some code computes aggregates (e.g., day/week amounts) on the client using helper hooks/utilities; scheduled functions handle cleanup and backups.
+
+## Algolia & EmailJS Configuration
+
+* **Algolia**: Create an index (e.g., name matches `REACT_APP_ALGOLIA_INDEX`), set searchable attributes (name, phone, email as needed). Use a **Search‑Only API Key** in the frontend.
+* **EmailJS**: Create a service + template. Add the `REACT_APP_EMAILJS_*` variables. The app posts to `https://api.emailjs.com/api/v1.0/email/send` to deliver verification links.
+
+## Exporting & Reports
+
+* Admin reports view can export the current filtered dataset to **Excel** using `xlsx` and **downloads** the file via `file-saver`.
+* Sorting helpers (`src/helpers/index.js`) support ordering by `dayCount`, `dayAmount`, `weekAmount`, etc.
+
+## Deployment
+
+1. Build the SPA:
+
+   ```bash
+   npm run build
+   ```
+2. Deploy Hosting & Functions:
+
+   ```bash
+   firebase deploy --only hosting,functions
+   ```
+3. Confirm scheduled tasks and set proper **roles** for any service accounts used by Firestore export (Storage Admin, Datastore Import Export Admin).
+
