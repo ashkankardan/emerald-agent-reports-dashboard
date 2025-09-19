@@ -24,9 +24,6 @@ A role‑based React + Firebase application for collecting and managing agent re
 * [Algolia & EmailJS Configuration](#algolia--emailjs-configuration)
 * [Exporting & Reports](#exporting--reports)
 * [Deployment](#deployment)
-* [Security Notes](#security-notes)
-* [Roadmap / Ideas](#roadmap--ideas)
-* [License](#license)
 
 ---
 
